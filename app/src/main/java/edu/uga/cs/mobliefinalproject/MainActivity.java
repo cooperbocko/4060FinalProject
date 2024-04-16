@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
+    //logins:
     //all below is test code to confirm that it is connected to firebase correctly. Can do anything with it.
 
     public static final String TAG = "SuperApp";
