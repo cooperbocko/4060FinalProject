@@ -20,20 +20,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
-    //logins:
+    //logins:dev1@gmail.com, password   : dev2@gmail.com, password
     //all below is test code to confirm that it is connected to firebase correctly. Can do anything with it.
 
-    public static final String TAG = "SuperApp";
-    private FirebaseAuth mAuth;
+    //public static final String TAG = "SuperApp";
+    //private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView textView = findViewById(R.id.tv_1);
+        HomeFragment homeFragment = new HomeFragment();
+        getSupportFragmentManager().beginTransaction().replace( android.R.id.content, homeFragment ).commit();
 
-        mAuth = FirebaseAuth.getInstance();
+        //TextView textView = findViewById(R.id.tv_1);
+
+        /*mAuth = FirebaseAuth.getInstance();
         String email = "dev1@gmail.com";
         String password = "password";
 
@@ -76,5 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d( TAG, "Failed to read value.", error.toException() );
             }
         });
+         */
     }
 }
