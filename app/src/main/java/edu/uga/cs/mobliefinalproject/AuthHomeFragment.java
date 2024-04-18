@@ -3,7 +3,10 @@ package edu.uga.cs.mobliefinalproject;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +18,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 
 public class AuthHomeFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-    public static final String TAG = "SuperApp";
 
     public static final String AUTH_HEADER = "header";
 
@@ -41,7 +39,7 @@ public class AuthHomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            ;
+
         }
     }
 
@@ -62,9 +60,18 @@ public class AuthHomeFragment extends Fragment {
         return rootView;
     }
 
+
+
     private class ButtonCLickListener1 implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+
+            Fragment loginFragment = new LoginFragment();
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainerView3, loginFragment, null)
+                    .addToBackStack(null)
+                    .commit();
+
 
         }
     }

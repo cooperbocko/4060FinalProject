@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        //Main Activity button info
+        //AuthHomeFragment button info
         Intent intent = getIntent();
         String header = intent.getStringExtra(AuthHomeFragment.AUTH_HEADER);
 
@@ -52,10 +52,22 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager  = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-                fragmentTransaction.replace(R.id.fragmentContainerView3, AuthHomeFragment.class, null);
-                fragmentTransaction.setReorderingAllowed(true);
-                fragmentTransaction.addToBackStack(header);
-                fragmentTransaction.commit();
+ /*
+                switch (header){
+                    case "Log In":
+                        fragmentTransaction.replace(R.id.fragmentContainerView3, LoginFragment.class, null);
+                        fragmentTransaction.setReorderingAllowed(true);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                        break;
+
+                    default:
+*/
+                        fragmentTransaction.replace(R.id.fragmentContainerView3, AuthHomeFragment.class, null);
+                        fragmentTransaction.commit();
+
+
+
 
 
 
