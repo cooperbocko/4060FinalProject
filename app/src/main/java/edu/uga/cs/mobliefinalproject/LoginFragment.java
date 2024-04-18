@@ -7,15 +7,18 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LoginFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class LoginFragment extends Fragment {
 
-    private
+    private EditText email;
+
+    private EditText password;
+
+
+
+
 
     public LoginFragment() {
         // Required empty public constructor
@@ -34,10 +37,6 @@ public class LoginFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
 
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .add(R.id.fragment_container_view3, ExampleFragment.class, null)
-                    .commit();
 
         }
     }

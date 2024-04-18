@@ -2,6 +2,8 @@ package edu.uga.cs.mobliefinalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         signup.setOnClickListener((new ButtonCLickListener2()));
 
 
-        /*
+         /*
         mAuth = FirebaseAuth.getInstance();
         String email = "dev1@gmail.com";
         String password = "password";
@@ -103,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
             Intent intent = new Intent(v.getContext(), AuthActivity.class);
             intent.putExtra(AUTH_HEADER, "Log In");
+
+
 
             startActivity(intent);
 
