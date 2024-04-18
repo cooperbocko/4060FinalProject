@@ -15,11 +15,6 @@
         android:theme="@style/Theme.MoblieFinalProject"
         tools:targetApi="31">
         <activity
-            android:name=".AuthActivity"
-            android:parentActivityName=".MainActivity"
-             android:exported="false" />
-        <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
