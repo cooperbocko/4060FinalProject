@@ -27,9 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "SuperApp";
 
-    public static final String LOG_IN = "login";
+    public static final String AUTH_HEADER = "header";
 
-    public static final String SIGN_UP = "signup";
     private Button login, signup;
     private FirebaseAuth mAuth;
 
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             Intent intent = new Intent(v.getContext(), AuthActivity.class);
-            intent.putExtra(LOG_IN, "Log In");
+            intent.putExtra(AUTH_HEADER, "Log In");
 
             startActivity(intent);
 
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             Intent intent = new Intent(v.getContext(), AuthActivity.class);
-            intent.putExtra(SIGN_UP, "Sign Up");
+            intent.putExtra(AUTH_HEADER, "Sign Up");
 
             startActivity(intent);
 
