@@ -2,6 +2,7 @@ package edu.uga.cs.mobliefinalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,26 +28,41 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
     //all below is test code to confirm that it is connected to firebase correctly. Can do anything with it.
 
-    public static final String TAG = "SuperApp";
-
-    public static final String AUTH_HEADER = "header";
-
-    private Button login, signup;
-    private FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView textView = findViewById(R.id.tv_1);
 
-        login = (Button) findViewById(R.id.button1);
 
-        signup = (Button) findViewById(R.id.button2);
+        //Main Activity button info
+        Intent intent = getIntent();
+        String header = intent.getStringExtra(AuthHomeFragment.AUTH_HEADER);
 
-        login.setOnClickListener((new ButtonCLickListener1()));
-        signup.setOnClickListener((new ButtonCLickListener2()));
+        /*
+        //Action Bar Back Button
+        Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolBar);
+        getSupportActionBar().setTitle(header);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+`       */
+
+
+        //fragment manager
+        FragmentManager fragmentManager  = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                fragmentTransaction.replace(R.id.fragmentContainerView3, AuthHomeFragment.class, null);
+                fragmentTransaction.setReorderingAllowed(true);
+                fragmentTransaction.addToBackStack(header);
+                fragmentTransaction.commit();
+
+
+
+
+
+    }
+}
 
 
          /*
@@ -96,33 +112,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
          */
-    }
-
-    //Log in Button Handler
-    private class ButtonCLickListener1 implements View.OnClickListener{
-        @Override
-        public void onClick(View v) {
-
-            Intent intent = new Intent(v.getContext(), AuthActivity.class);
-            intent.putExtra(AUTH_HEADER, "Log In");
 
 
 
-            startActivity(intent);
 
-        }
-    }
-
-    //Sign Up Button Handler
-    private class ButtonCLickListener2 implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-
-            Intent intent = new Intent(v.getContext(), AuthActivity.class);
-            intent.putExtra(AUTH_HEADER, "Sign Up");
-
-            startActivity(intent);
-
-        }
-    }
-}
