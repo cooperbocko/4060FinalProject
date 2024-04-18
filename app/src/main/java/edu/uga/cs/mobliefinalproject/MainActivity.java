@@ -3,8 +3,11 @@ package edu.uga.cs.mobliefinalproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +26,11 @@ public class MainActivity extends AppCompatActivity {
     //all below is test code to confirm that it is connected to firebase correctly. Can do anything with it.
 
     public static final String TAG = "SuperApp";
+
+    public static final String LOG_IN = "login";
+
+    public static final String SIGN_UP = "signup";
+    private Button login, signup;
     private FirebaseAuth mAuth;
 
     @Override
@@ -32,6 +40,15 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.tv_1);
 
+        login = (Button) findViewById(R.id.button1);
+
+        signup = (Button) findViewById(R.id.button2);
+
+        login.setOnClickListener((new ButtonCLickListener1()));
+        signup.setOnClickListener((new ButtonCLickListener2()));
+
+
+        /*
         mAuth = FirebaseAuth.getInstance();
         String email = "dev1@gmail.com";
         String password = "password";
@@ -57,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference( "message" );
 
+
         // Read from the database value for ”message”
         myRef.addValueEventListener( new ValueEventListener() {
             @Override
@@ -75,5 +93,33 @@ public class MainActivity extends AppCompatActivity {
                 Log.d( TAG, "Failed to read value.", error.toException() );
             }
         });
+
+         */
+    }
+
+    //Log in Button Handler
+    private class ButtonCLickListener1 implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(v.getContext(), AuthActivity.class);
+            intent.putExtra(LOG_IN, "Log In");
+
+            startActivity(intent);
+
+        }
+    }
+
+    //Sign Up Button Handler
+    private class ButtonCLickListener2 implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(v.getContext(), AuthActivity.class);
+            intent.putExtra(SIGN_UP, "Sign Up");
+
+            startActivity(intent);
+
+        }
     }
 }
