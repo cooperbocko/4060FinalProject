@@ -2,9 +2,11 @@ package edu.uga.cs.mobliefinalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle("");
 
         HomeFragment homeFragment = new HomeFragment();
         getSupportFragmentManager().beginTransaction().replace( android.R.id.content, homeFragment ).commit();
@@ -80,5 +86,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
          */
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+            if (item.getItemId() == R.id.ride_offers) {
+                RideOffersFragment rideOffersFragment = new RideOffersFragment();
+                getSupportFragmentManager().beginTransaction().replace(android.R.id.content, rideOffersFragment).commit();
+                return true;
+
+            } else if(item.getItemId() == R.id.ride_requests) {
+                RideRequestsFragment rideRequestsFragment = new RideRequestsFragment();
+                getSupportFragmentManager().beginTransaction().replace(android.R.id.content, rideRequestsFragment).commit();
+                return true;
+
+            }else {
+                // The user's action isn't recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+            }
+
     }
 }
