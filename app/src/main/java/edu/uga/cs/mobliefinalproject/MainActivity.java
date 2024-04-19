@@ -39,13 +39,14 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String header = intent.getStringExtra(AuthHomeFragment.AUTH_HEADER);
 
+
         /*
         //Action Bar Back Button
-        Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolBar);
         getSupportActionBar().setTitle(header);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-`       */
+`      */
 
 
         //fragment manager
@@ -63,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
 
                     default:
 */
-                        fragmentTransaction.replace(R.id.fragmentContainerView3, AuthHomeFragment.class, null);
+                        fragmentTransaction.add(R.id.fragmentContainerView3,
+                                AuthHomeFragment.class, null);
                         fragmentTransaction.commit();
+                        fragmentTransaction.addToBackStack("atuh_page_home");
 
 
 
