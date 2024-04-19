@@ -80,6 +80,12 @@ public class AuthHomeFragment extends Fragment {
         @Override
         public void onClick(View v) {
 
+            Fragment signupFragment = new SignupFragment();
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainerView3, signupFragment, null)
+                    .addToBackStack(null)
+                    .commit();
+
         }
     }
 }
