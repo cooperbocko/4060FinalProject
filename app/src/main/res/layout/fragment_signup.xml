@@ -9,14 +9,14 @@
     tools:context=".SignupFragment">
 
     <EditText
-        android:id="@+id/editTextText2"
+        android:id="@+id/et_registerEmail"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:ems="10"
         android:inputType="text"
         android:text="Set Email"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText3"
+        app:layout_constraintBottom_toTopOf="@+id/et_registerPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +24,7 @@
         app:layout_constraintVertical_bias="0.832" />
 
     <EditText
-        android:id="@+id/editTextText3"
+        android:id="@+id/et_registerPassword"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="196dp"
@@ -32,7 +32,7 @@
         android:inputType="text"
         android:text="Set Password"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText4"
+        app:layout_constraintBottom_toTopOf="@+id/et_confrimPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +40,7 @@
         app:layout_constraintVertical_bias="0.659" />
 
     <EditText
-        android:id="@+id/editTextText4"
+        android:id="@+id/et_confrimPassword"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="292dp"
@@ -48,14 +48,14 @@
         android:inputType="text"
         android:text="Confirm Password"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintBottom_toTopOf="@+id/btn_createAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/btn_createAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create Account"
