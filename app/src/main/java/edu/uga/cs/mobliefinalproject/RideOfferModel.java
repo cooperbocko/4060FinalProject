@@ -1,6 +1,7 @@
 package edu.uga.cs.mobliefinalproject;
 
 public class RideOfferModel {
+    public int key;
     public String driver;
     public String details;
     public String from;
