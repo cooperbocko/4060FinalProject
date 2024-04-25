@@ -3,6 +3,7 @@ package edu.uga.cs.mobliefinalproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -28,16 +29,21 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
     //all below is test code to confirm that it is connected to firebase correctly. Can do anything with it.
 
+    public static final String AUTH_HEADER = "header";
+    private  Button login, signup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 
+        login = (Button) findViewById(R.id.button1);
+        signup = (Button) findViewById(R.id.button2);
 
-        //AuthHomeFragment button info
-        Intent intent = getIntent();
-        String header = intent.getStringExtra(AuthHomeFragment.AUTH_HEADER);
+        login.setOnClickListener((new MainActivity.ButtonCLickListener1()));
+        signup.setOnClickListener((new MainActivity.ButtonCLickListener2()));
+
+
 
 
         /*
@@ -49,9 +55,7 @@ public class MainActivity extends AppCompatActivity {
 `      */
 
 
-        //fragment manager
-        FragmentManager fragmentManager  = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
 
  /*
                 switch (header){
@@ -64,12 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
                     default:
 */
-                        fragmentTransaction.add(R.id.fragmentContainerView3,
-                                AuthHomeFragment.class, null);
-                        fragmentTransaction.commit();
-                        fragmentTransaction.addToBackStack("atuh_page_home");
-
-
 
 
 
@@ -78,7 +76,36 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    private class ButtonCLickListener1 implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+
+            Intent intent   = new Intent(v.getContext(), AuthActivity.class);
+            intent.putExtra(AUTH_HEADER, "Log In");
+
+            startActivity(intent);
+
+
+
+        }
+    }
+
+    public class ButtonCLickListener2 implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+
+
+            Intent intent   = new Intent(v.getContext(), AuthActivity.class);
+            intent.putExtra(AUTH_HEADER, "Sign Up");
+
+            startActivity(intent);
+
+
+        }
+    }
 }
+
 
 
          /*
