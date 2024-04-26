@@ -15,10 +15,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignupFragment extends Fragment {
     private static final String DEGUB = "SignupFragment";
@@ -91,6 +95,8 @@ public class SignupFragment extends Fragment {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(DEGUB, "createUserWithEmail: success" );
 
+                                createNewUser();
+
                                 //FirebaseUser user = firebaseAuth.getCurrentUser(); ---> maybe use for current user..
                                 //navigate to the home screen
 
@@ -103,5 +109,35 @@ public class SignupFragment extends Fragment {
                         }
                     });
         }
+    }
+
+    private void createNewUser() {
+        final String email = setEmail.getText().toString();
+        final UserModel newUser = new UserModel(email, 5);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("users");
+
+        myRef.push().setValue( newUser )
+                .addOnSuccessListener( new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Show a quick confirmation
+                        Toast.makeText(getActivity(), "Job lead created for " + newUser.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        Log.d(DEGUB, "New User Created: " + newUser.toString());
+
+                        // Clear the EditTexts for next use.
+
+                    }
+                })
+                .addOnFailureListener( new OnFailureListener() {
+                    @Override
+                    public void onFailure( @NonNull Exception e ) {
+                        Toast.makeText( getActivity(), "Failed to create a Job lead for " + newUser.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        Log.d(DEGUB, "Failed to create New User: " + newUser.toString());
+                    }
+                });
     }
 }
