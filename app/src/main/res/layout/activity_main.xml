@@ -6,28 +6,49 @@
     android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".AuthActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:layout_marginTop="224dp"
+        android:fontFamily="@font/space_mono_bold"
+        android:text="LyftinDawgs"
+        android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fragmentContainerView"
         app:layout_constraintBottom_toTopOf="@id/fragmentContainerView"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainerView"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/my_toolbar"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginRight="100dp"
+        android:padding="15dp"
+        android:text="Log In"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent
-"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_1" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:padding="15dp"
+        android:text="Sign Up"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button1"
+        app:layout_constraintVertical_bias="0.108" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
