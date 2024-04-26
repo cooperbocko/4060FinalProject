@@ -45,37 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-        /*
-        //Action Bar Back Button
-        Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar2);
-        setSupportActionBar(toolBar);
-        getSupportActionBar().setTitle(header);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-`      */
-
-
-
-
- /*
-                switch (header){
-                    case "Log In":
-                        fragmentTransaction.replace(R.id.fragmentContainerView3, LoginFragment.class, null);
-                        fragmentTransaction.setReorderingAllowed(true);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
-                        break;
-
-                    default:
-*/
-
-
-
-
-
-
-
     }
+
+
 
     private class ButtonCLickListener1 implements View.OnClickListener {
         @Override
@@ -83,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
             Intent intent   = new Intent(v.getContext(), AuthActivity.class);
             intent.putExtra(AUTH_HEADER, "Log In");
+
 
             startActivity(intent);
 

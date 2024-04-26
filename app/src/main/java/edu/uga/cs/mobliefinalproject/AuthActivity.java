@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.SimpleAdapter;
+import android.widget.Switch;
 
 public class AuthActivity extends AppCompatActivity {
 
@@ -16,12 +18,10 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
+
+
         //Initialize views
         Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
-
-        //begin an instance of fragment manager / transaction
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         //receive intent
         Intent intent = getIntent();
@@ -33,16 +33,25 @@ public class AuthActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        switch (header) {
-            case "Log In":
-                fragmentTransaction.replace(R.id.fragmentContainerView, LoginFragment.class, null);
-                fragmentTransaction.setReorderingAllowed(true);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                break;
 
-            default:
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            Fragment frag;
 
-        }
+            switch(header){
+                case "Log In":
+                    frag = new LoginFragment();
+                    break;
+                default:
+                    frag = new SignupFragment();
+            }
+
+            transaction
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragmentContainerView, frag, null)
+                    .commit();
+
+
+
     }
-}
+    }

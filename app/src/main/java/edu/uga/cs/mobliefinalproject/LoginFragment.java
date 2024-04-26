@@ -63,14 +63,9 @@ public class LoginFragment extends Fragment {
         //Button listener
         btn_login.setOnClickListener(new LoginButtonListener());
 
-        //Action Bar Back Button
-        MainActivity ap = (MainActivity)getActivity();
-        Toolbar toolBar = (Toolbar) rootView.findViewById(R.id.toolbar2);
-        ap.setSupportActionBar(toolBar);
-        ap.getSupportActionBar().setTitle("Log In");
-        ap.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         return rootView;
+
     }
 
 
