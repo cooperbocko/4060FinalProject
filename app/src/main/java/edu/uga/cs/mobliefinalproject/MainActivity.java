@@ -9,6 +9,7 @@ import android.widget.Button;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static String DEBUG = "MainActivity";
     //logins:dev1@gmail.com, password   : dev2@gmail.com, password
     //all below is test code to confirm that it is connected to firebase correctly. Can do anything with it.
 
