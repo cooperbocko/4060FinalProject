@@ -80,7 +80,7 @@ public class LoginFragment extends Fragment {
             if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 Log.d(DEBUG, "Valid Email");
             } else {
-                //Toast.makeText(getActivity(), "Invalid Email Address!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Invalid Email Address!", Toast.LENGTH_SHORT).show();
                 Log.d(DEBUG, "Invalid Email");
                 return;
             }
@@ -105,6 +105,7 @@ public class LoginFragment extends Fragment {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(DEBUG, "signInWithEmail:success" );
                                 //FirebaseUser user = mAuth.getCurrentUser(); ---> maybe use this for current user
+                                CurrentUser.email = email;
                                 //transition to new fragment and update current user
                                 Intent intent = new Intent(v.getContext(), HomeActivity.class);
                                 startActivity(intent);
