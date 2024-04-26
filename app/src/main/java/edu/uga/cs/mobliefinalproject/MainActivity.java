@@ -3,6 +3,7 @@ package edu.uga.cs.mobliefinalproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,8 +11,10 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,10 +30,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
+    //logins:dev1@gmail.com, password   : dev2@gmail.com, password
     //all below is test code to confirm that it is connected to firebase correctly. Can do anything with it.
 
     public static final String AUTH_HEADER = "header";
     private  Button login, signup;
+
+    //public static final String TAG = "SuperApp";
+    //private FirebaseAuth mAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
 
          /*
         mAuth = FirebaseAuth.getInstance();
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle("");
+
+        HomeFragment homeFragment = new HomeFragment();
+        getSupportFragmentManager().beginTransaction().replace( android.R.id.content, homeFragment ).commit();
+
+        //TextView textView = findViewById(R.id.tv_1);
+
+        /*mAuth = FirebaseAuth.getInstance();
+
         String email = "dev1@gmail.com";
         String password = "password";
 
@@ -127,8 +147,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
          */
 
 
 
+         */
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+            if (item.getItemId() == R.id.ride_offers) {
+                RideOffersFragment rideOffersFragment = new RideOffersFragment();
+                getSupportFragmentManager().beginTransaction().replace(android.R.id.content, rideOffersFragment).commit();
+                return true;
+
+            } else if(item.getItemId() == R.id.ride_requests) {
+                RideRequestsFragment rideRequestsFragment = new RideRequestsFragment();
+                getSupportFragmentManager().beginTransaction().replace(android.R.id.content, rideRequestsFragment).commit();
+                return true;
+
+            }else {
+                // The user's action isn't recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+            }
+
+    }
+}
 
