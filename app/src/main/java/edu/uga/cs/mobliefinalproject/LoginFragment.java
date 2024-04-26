@@ -106,6 +106,8 @@ public class LoginFragment extends Fragment {
                                 Log.d(DEBUG, "signInWithEmail:success" );
                                 //FirebaseUser user = mAuth.getCurrentUser(); ---> maybe use this for current user
                                 //transition to new fragment and update current user
+                                Intent intent = new Intent(v.getContext(), HomeActivity.class);
+                                startActivity(intent);
 
                             }
                             else {
