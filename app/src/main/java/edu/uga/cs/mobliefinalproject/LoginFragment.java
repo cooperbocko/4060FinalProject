@@ -110,6 +110,7 @@ public class LoginFragment extends Fragment {
                                 Intent intent = new Intent(v.getContext(), HomeActivity.class);
                                 startActivity(intent);
 
+
                             }
                             else {
                                 // If sign in fails, display a message to the user.
