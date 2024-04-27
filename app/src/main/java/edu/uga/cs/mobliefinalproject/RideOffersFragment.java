@@ -68,7 +68,7 @@ public class RideOffersFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        //list of rideoffers
+        //list of ride offers
         rideOfferModelList = new ArrayList<>();
 
 
@@ -76,6 +76,7 @@ public class RideOffersFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("rideoffers");
 
+        //gets non-accepted and non-owned ride offers
         myRef.addValueEventListener( new ValueEventListener() {
 
             @Override
@@ -91,8 +92,10 @@ public class RideOffersFragment extends Fragment {
                         Log.d(DEBUG, "Offer not added: " + rideOfferModel);
                         continue;
                     } else {
+                        //add offer to list
                         rideOfferModelList.add( rideOfferModel );
                         Log.d(DEBUG, "Offer added: " + rideOfferModel);
+
                     }
                 }
 
@@ -114,4 +117,6 @@ public class RideOffersFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_ride_offers, container, false);
     }
+
+
 }

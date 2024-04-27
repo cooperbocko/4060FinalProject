@@ -25,6 +25,9 @@ import com.google.firebase.database.ValueEventListener;
 public class ProfileFragment extends Fragment {
 
     private static final String FRAGMENT_POSITION = "position";
+    private static final String DEBUG = "Profile Fragment";
+    private FirebaseDatabase database;
+    private UserModel user;
 
 
 
@@ -45,14 +48,14 @@ public class ProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             int position = getArguments().getInt(FRAGMENT_POSITION);
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
 
         //database stuff
         database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users");
 
+        //gets current user data
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -61,6 +64,7 @@ public class ProfileFragment extends Fragment {
                     userModel.setKey(postSnapshot.getKey());
                     if (userModel.getEmail().equals(CurrentUser.email)) {
                         //set the profile data and update the usermodel in this fragment
+                        user = userModel;
                         Log.d(DEBUG, "Current user data found: " + userModel.toString());
                         break;
                     } else {
