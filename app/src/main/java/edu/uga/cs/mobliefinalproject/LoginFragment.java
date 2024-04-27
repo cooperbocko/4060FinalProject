@@ -20,11 +20,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class LoginFragment extends Fragment {
     private static final String DEBUG = "Login Fragment";
+    //private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private EditText et_email;
     private EditText et_password;
@@ -105,6 +110,32 @@ public class LoginFragment extends Fragment {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(DEBUG, "signInWithEmail:success" );
                                 //FirebaseUser user = mAuth.getCurrentUser(); ---> maybe use this for current user
+                                //mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
+                                /*mDatabase.addValueEventListener( new ValueEventListener() {
+
+                                    @Override
+                                    public void onDataChange( @NonNull DataSnapshot snapshot ) {
+                                        // Once we have a DataSnapshot object, we need to iterate over the elements and place them on our job lead list.
+                                         // clear the current content; this is inefficient!
+                                        for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
+                                            UserModel userModel = postSnapshot.getValue(UserModel.class);
+                                            userModel.setKey( postSnapshot.getKey() );
+
+                                            Log.d(DEBUG, "Got user: " + userModel.getEmail() + userModel.getKey() + userModel.getPoints());
+                                        }
+
+                                        //implement this later
+                                        //Log.d( DEBUG_TAG, "ValueEventListener: notifying recyclerAdapter" );
+                                        //recyclerAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled( @NonNull DatabaseError databaseError ) {
+                                        Log.d(DEBUG, "Error reading users from database: " + databaseError);
+                                    }
+                                } );
+                                 */
                                 CurrentUser.email = email;
                                 //transition to new fragment and update current user
                                 Intent intent = new Intent(v.getContext(), HomeActivity.class);

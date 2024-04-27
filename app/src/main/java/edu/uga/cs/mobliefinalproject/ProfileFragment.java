@@ -16,17 +16,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link RideOffersFragment#newInstance} factory method to
+ * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RideOffersFragment extends Fragment {
-    private static final String DEBUG = "RideOffersFragment";
-    private List<RideOfferModel> rideOfferModelList;
+public class ProfileFragment extends Fragment {
+    private static final String DEBUG = "Profile Fragment";
+    private UserModel user;
     private FirebaseDatabase database;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -38,7 +35,7 @@ public class RideOffersFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public RideOffersFragment() {
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
@@ -48,11 +45,11 @@ public class RideOffersFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment RideOfferFragment.
+     * @return A new instance of fragment ProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RideOffersFragment newInstance(String param1, String param2) {
-        RideOffersFragment fragment = new RideOffersFragment();
+    public static ProfileFragment newInstance(String param1, String param2) {
+        ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -68,50 +65,38 @@ public class RideOffersFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        //list of rideoffers
-        rideOfferModelList = new ArrayList<>();
-
-
         //database stuff
         database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("rideoffers");
+        DatabaseReference myRef = database.getReference("users");
 
-        myRef.addValueEventListener( new ValueEventListener() {
-
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange( @NonNull DataSnapshot snapshot ) {
-                // Once we have a DataSnapshot object, we need to iterate over the elements and place them on our job lead list.
-                rideOfferModelList.clear(); // clear the current content; this is inefficient!
-                for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
-                    RideOfferModel rideOfferModel = postSnapshot.getValue(RideOfferModel.class);
-                    rideOfferModel.setKey( postSnapshot.getKey() );
-
-                    //check if accepted or your own offer
-                    if (rideOfferModel.isAccepted() || rideOfferModel.getDriver().equals(CurrentUser.email)) {
-                        Log.d(DEBUG, "Offer not added: " + rideOfferModel);
-                        continue;
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+                    UserModel userModel = postSnapshot.getValue(UserModel.class);
+                    userModel.setKey(postSnapshot.getKey());
+                    if (userModel.getEmail().equals(CurrentUser.email)) {
+                        //set the profile data and update the usermodel in this fragment
+                        Log.d(DEBUG, "Current user data found: " + userModel.toString());
+                        break;
                     } else {
-                        rideOfferModelList.add( rideOfferModel );
-                        Log.d(DEBUG, "Offer added: " + rideOfferModel);
+                        continue;
                     }
                 }
 
-                //implement this later
-                //Log.d( DEBUG_TAG, "ValueEventListener: notifying recyclerAdapter" );
-                //recyclerAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled( @NonNull DatabaseError databaseError ) {
-                Log.d(DEBUG, "Error reading offers from database: " + databaseError);
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d(DEBUG, "Failed to get current user data of: " + CurrentUser.email + " database error: " + error);
             }
-        } );
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ride_offers, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 }
