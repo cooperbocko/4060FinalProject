@@ -181,6 +181,16 @@ public class OfferFragment extends Fragment {
             }
         });
 
+        //request ride listener
+        request.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new RecyclerViewAdapter.RequestDialogFragment().show(getChildFragmentManager(),
+                        DIALOG_TAG);
+
+            }
+        });
+
 
         return rootView;
     }
@@ -307,17 +317,68 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             // Create the AlertDialog and show it
             return builder.create();
         }
+
     }
 
-    /*
-    //Show Dialog
-    void showDialogFragment(DialogFragment newFragment) {
-        Log.d( "DialogFrag",
-                "SimpleFragDialogActivity.showDialogFragment(): newFragment" + newFragment );
-        newFragment(getSupportFragmentManager(), null);
+    //request dialog handler
+    public static class RequestDialogFragment extends DialogFragment {
+        public static RequestDialogFragment newInstance() {
+            return new RequestDialogFragment();
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View layout = inflater.inflate(R.layout.request_dialog,
+                    (ViewGroup) getActivity().findViewById(R.id.linearLayout));
+            final EditText from = (EditText) layout.findViewById(R.id.editTextText);
+            final EditText to = (EditText) layout.findViewById(R.id.editTextText2);
+            final EditText date = (EditText) layout.findViewById(R.id.editTextDate2);
+            final EditText time = (EditText) layout.findViewById(R.id.editTextTime2);
+
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(layout);
+            // Now configure the AlertDialog
+            builder.setTitle("Request Ride");
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // We forcefully dismiss and remove the Dialog, so it
+                    // cannot be used again
+                    dialog.dismiss();
+                }
+            });
+
+            //
+            //Add To DB in this meathod
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String strFrom = from.getText().toString();
+                    String strTo = to.getText().toString();
+                    String strDate = date.getText().toString();
+                    String strTime = time.getText().toString();
+
+
+
+                    Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
+                                    + strDate + " Time: " + strTime ,
+                            Toast.LENGTH_SHORT).show();
+
+                    // We forcefully dismiss and remove the Dialog, so it
+                    // cannot be used again
+                    dialog.dismiss();
+                }
+            });
+            // Create the AlertDialog and show it
+            return builder.create();
+        }
     }
 
-     */
+
 
 }
 
