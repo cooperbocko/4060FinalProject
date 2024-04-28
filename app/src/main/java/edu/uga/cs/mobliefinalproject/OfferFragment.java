@@ -1,18 +1,29 @@
 package edu.uga.cs.mobliefinalproject;
 
+import static android.app.PendingIntent.getActivity;
+
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.content.Context;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -30,8 +41,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class OfferFragment extends Fragment {
     private static final String FRAGMENT_POSITION = "position";
     private static final String DEBUG = "OfferFragment";
+
+    private static final String DIALOG_TAG = "CustomFragDiolog";
     private List<RideOfferModel> rideOfferModelList;
     private FirebaseDatabase database;
+
 
     FloatingActionButton options ,drive, request;
 
@@ -121,12 +135,14 @@ public class OfferFragment extends Fragment {
         //recycler.SetLayoutManager(new LinearLayoutManager(this);
 
 
-        //Buttons
-     options = rootView.findViewById(R.id.floatingActionButton);
-       drive = rootView.findViewById(R.id.floatingActionButton3);
-       request = rootView.findViewById(R.id.floatingActionButton2);
-      offerRide = rootView.findViewById(R.id.textView8);
-      requestRide = rootView.findViewById(R.id.textView7);
+
+
+        // Floating Action Buttons
+         options = rootView.findViewById(R.id.floatingActionButton);
+        drive = rootView.findViewById(R.id.floatingActionButton3);
+         request = rootView.findViewById(R.id.floatingActionButton2);
+        offerRide = rootView.findViewById(R.id.textView8);
+        requestRide = rootView.findViewById(R.id.textView7);
 
         drive.setVisibility(rootView.GONE);
         request.setVisibility(rootView.GONE);
@@ -156,14 +172,22 @@ public class OfferFragment extends Fragment {
 
         });
 
+        //Offer Button
+        drive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new RecyclerViewAdapter.OfferDialogFragment().show(getChildFragmentManager(),
+                        DIALOG_TAG);
+            }
+        });
+
 
         return rootView;
     }
 }
 
-////
-////
-
+//
+//
 //Defines recyclerview
 class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>{
 
@@ -220,4 +244,79 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
 
         }
     }
+
+    //
+    //
+
+
+
+
+    //Offer Dialog Handler
+    public static class OfferDialogFragment extends DialogFragment {
+        public static OfferDialogFragment newInstance() {
+            return new OfferDialogFragment();
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View layout = inflater.inflate(R.layout.offer_dialog,
+                    (ViewGroup) getActivity().findViewById(R.id.linearLayout));
+            final EditText from = (EditText) layout.findViewById(R.id.editText);
+            final EditText to = (EditText) layout.findViewById(R.id.editText2);
+            final EditText date = (EditText) layout.findViewById(R.id.editTextDate);
+            final EditText time = (EditText) layout.findViewById(R.id.editTextTime);
+            final EditText seats = (EditText) layout.findViewById(R.id.editTextNumber);
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(layout);
+            // Now configure the AlertDialog
+            builder.setTitle("Offer Ride");
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // We forcefully dismiss and remove the Dialog, so it
+                    // cannot be used again
+                    dialog.dismiss();
+                }
+            });
+
+            //
+            //Add To DB in this meathod
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String strFrom = from.getText().toString();
+                    String strTo = to.getText().toString();
+                    String strDate = date.getText().toString();
+                    String strTime = time.getText().toString();
+                    String strSeats = seats.getText().toString();
+
+
+                    Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
+                                    + strDate + " Time: " + strTime +  " Seats: " + strSeats,
+                            Toast.LENGTH_SHORT).show();
+
+                    // We forcefully dismiss and remove the Dialog, so it
+                    // cannot be used again
+                    dialog.dismiss();
+                }
+            });
+            // Create the AlertDialog and show it
+            return builder.create();
+        }
+    }
+
+    /*
+    //Show Dialog
+    void showDialogFragment(DialogFragment newFragment) {
+        Log.d( "DialogFrag",
+                "SimpleFragDialogActivity.showDialogFragment(): newFragment" + newFragment );
+        newFragment(getSupportFragmentManager(), null);
+    }
+
+     */
+
 }
