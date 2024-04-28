@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
@@ -25,6 +26,8 @@ import android.widget.TextView;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,7 +46,7 @@ public class OfferFragment extends Fragment {
     private static final String DEBUG = "OfferFragment";
 
     private static final String DIALOG_TAG = "CustomFragDiolog";
-    private List<RideOfferModel> rideOfferModelList;
+    private ArrayList<RideOfferModel> rideOfferModelList;
     private FirebaseDatabase database;
 
 
@@ -72,10 +75,28 @@ public class OfferFragment extends Fragment {
             int position = getArguments().getInt(FRAGMENT_POSITION);
         }
 
-
-
         //list of ride offers
         rideOfferModelList = new ArrayList<>();
+
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View rootView =  inflater.inflate(R.layout.fragment_offer, container, false);
+
+        RecyclerView recycler = rootView.findViewById(R.id.recyclerView);
+
+        //Set up model
+        //setUpRideOfferModels(); still needs to be created
+
+
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity(), rideOfferModelList );
+        recycler.setAdapter(adapter);
+        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+
 
 
         //database stuff
@@ -106,8 +127,8 @@ public class OfferFragment extends Fragment {
                 }
 
                 //implement this later
-                //Log.d( DEBUG_TAG, "ValueEventListener: notifying recyclerAdapter" );
-                //recyclerAdapter.notifyDataSetChanged();
+                Log.d(DEBUG, "ValueEventListener: notifying recyclerAdapter" );
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -115,24 +136,6 @@ public class OfferFragment extends Fragment {
                 Log.d(DEBUG, "Error reading offers from database: " + databaseError);
             }
         } );
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.fragment_offer, container, false);
-
-        RecyclerView recycler = rootView.findViewById(R.id.recyclerView);
-
-        //Set up model
-        //setUpRideOfferModels(); still needs to be created
-
-
-        //RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, rideOfferModelList );
-        //recycler.setAdapter(adapter);
-        //recycler.SetLayoutManager(new LinearLayoutManager(this);
 
 
 
@@ -194,6 +197,7 @@ public class OfferFragment extends Fragment {
 
         return rootView;
     }
+
 }
 
 //
@@ -203,10 +207,12 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
 
     Context context;
     ArrayList<RideOfferModel> rideOfferModels;
+    private final static String DEBUG = "Recycler View Adapter";
 
     public RecyclerViewAdapter(Context context, ArrayList<RideOfferModel> rideOfferModels){
         this.context = context;
         this.rideOfferModels = rideOfferModels;
+        Log.d(DEBUG, "adapter created");
     }
 
     @NonNull
@@ -217,6 +223,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.recycler_view, parent, false);
 
+        Log.d(DEBUG, "On Create View Holder");
         return new RecyclerViewAdapter.MyViewHolder(view);
     }
 
@@ -224,18 +231,26 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.MyViewHolder holder, int position) {
         //assign values to each row as they reenter screen
 
+        RideOfferModel rideOfferModel = rideOfferModels.get(position);
+        holder.name.setText(rideOfferModel.driver);
+        holder.time.setText(rideOfferModel.date);
+        holder.location.setText("To: " + rideOfferModel.to + " From: " + rideOfferModel.from);
+
+
         //holder.name.setText();
         //holder.name.setText();
         //holder.name.setText();
 
         holder.delete.setText("Delete");
 
+        Log.d(DEBUG, "recycler view item added: " + rideOfferModel);
+
     }
 
     @Override
     public int getItemCount() {
         //number of recylerviews to have
-        return 3;
+        return rideOfferModels.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
@@ -251,15 +266,14 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             location = itemView.findViewById(R.id.textView5);
             delete = itemView.findViewById(R.id.button3);
 
+            Log.d(DEBUG, "My View Holder");
+
 
         }
     }
 
     //
     //
-
-
-
 
     //Offer Dialog Handler
     public static class OfferDialogFragment extends DialogFragment {
@@ -300,13 +314,17 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
                 public void onClick(DialogInterface dialog, int which) {
                     String strFrom = from.getText().toString();
                     String strTo = to.getText().toString();
-                    String strDate = date.getText().toString();
-                    String strTime = time.getText().toString();
+                    String strDate = date.getText().toString() + " || " + time.getText().toString();
                     String strSeats = seats.getText().toString();
+
+                    //post to db
+                    RideOfferModel rideOfferModel = new RideOfferModel(CurrentUser.email, strSeats, strFrom, strTo, strDate, false, "none");
+                    createNewOffer(rideOfferModel);
+
 
 
                     Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
-                                    + strDate + " Time: " + strTime +  " Seats: " + strSeats,
+                                    + strDate + " Seats: " + strSeats,
                             Toast.LENGTH_SHORT).show();
 
                     // We forcefully dismiss and remove the Dialog, so it
@@ -316,6 +334,35 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             });
             // Create the AlertDialog and show it
             return builder.create();
+        }
+
+
+
+        private void createNewOffer(RideOfferModel rideOfferModel) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("rideoffers");
+
+            myRef.push().setValue( rideOfferModel )
+                    .addOnSuccessListener( new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Show a quick confirmation
+                            //Toast.makeText(getActivity(), "Ride offer created: " + rideOfferModel,
+                            //        Toast.LENGTH_SHORT).show();
+                            Log.d(DEBUG, "New ride offer created: " + rideOfferModel);
+
+                            // Clear the EditTexts for next use.
+
+                        }
+                    })
+                    .addOnFailureListener( new OnFailureListener() {
+                        @Override
+                        public void onFailure( @NonNull Exception e ) {
+                            Toast.makeText( getActivity(), "Failed to create a ride offer: " + rideOfferModel,
+                                    Toast.LENGTH_SHORT).show();
+                            Log.d(DEBUG, "Failed to create ride offer: " + rideOfferModel);
+                        }
+                    });
         }
 
     }
@@ -381,4 +428,5 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
 
 
 }
+
 
