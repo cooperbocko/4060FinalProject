@@ -82,7 +82,7 @@ public class OfferFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("rideoffers");
 
-        //gets non-accepted and non-owned ride offers
+        //gets non-accepted offers
         myRef.addValueEventListener( new ValueEventListener() {
 
             @Override
@@ -93,8 +93,8 @@ public class OfferFragment extends Fragment {
                     RideOfferModel rideOfferModel = postSnapshot.getValue(RideOfferModel.class);
                     rideOfferModel.setKey( postSnapshot.getKey() );
 
-                    //check if accepted or your own offer
-                    if (rideOfferModel.isAccepted() || rideOfferModel.getDriver().equals(CurrentUser.email)) {
+                    //check if accepted
+                    if (rideOfferModel.isAccepted()) {
                         Log.d(DEBUG, "Offer not added: " + rideOfferModel);
                         continue;
                     } else {
@@ -320,3 +320,4 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
      */
 
 }
+
