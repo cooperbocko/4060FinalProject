@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class RidesAcceptedFragment extends Fragment {
+public class RidesAcceptedFragment extends Fragment implements RecyclerViewInterfave {
 
     private static final String FRAGMENT_POSITION = "position";
     private static final String DEBUG = "Accepted Rides";
@@ -106,6 +106,11 @@ public class RidesAcceptedFragment extends Fragment {
         } );
 
         return rootView;
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
     }
 }
 /**

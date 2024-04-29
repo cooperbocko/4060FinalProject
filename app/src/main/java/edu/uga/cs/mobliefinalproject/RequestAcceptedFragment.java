@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class RequestAcceptedFragment extends Fragment {
+public class RequestAcceptedFragment extends Fragment implements RecyclerViewInterfave {
 
     private static final String FRAGMENT_POSITION = "position";
     private static final String DEBUG = "Request Accept Fragment";
@@ -107,6 +107,11 @@ public class RequestAcceptedFragment extends Fragment {
 
         return rootView;
     }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
 }
 /**
  *
@@ -118,13 +123,14 @@ class RecyclerViewAdapterRequestAccept extends RecyclerView.Adapter<RecyclerView
 
     private final RecyclerViewInterfave recyclerViewInterfave;
     Context context;
-    static ArrayList<RideOfferModel> rideOfferModels;
+    static ArrayList<RideRequestModel> rideRequestModels;
     private final static String DEBUG = "Recycler View Adapter";
 
-    public RecyclerViewAdapterRequestAccept(Context context, ArrayList<RideOfferModel> rideOfferModels,
+    public RecyclerViewAdapterRequestAccept(Context context,
+                                            ArrayList<RideRequestModel> rideRequestModels,
                                RecyclerViewInterfave recyclerViewInterfave) {
         this.context = context;
-        this.rideOfferModels = rideOfferModels;
+        this.rideRequestModels = rideRequestModels;
         this.recyclerViewInterfave = recyclerViewInterfave;
         Log.d(DEBUG, "adapter created");
     }
@@ -142,25 +148,26 @@ class RecyclerViewAdapterRequestAccept extends RecyclerView.Adapter<RecyclerView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewAdapterRequestAccept.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerViewAdapterRequestAccept.MyViewHolder holder,
+                                 int position) {
         //assign values to each row as they reenter screen
 
-        RideOfferModel rideOfferModel = rideOfferModels.get(position);
-        holder.name.setText(rideOfferModel.driver);
-        holder.time.setText(rideOfferModel.date);
-        holder.location.setText("To: " + rideOfferModel.to + " From: " + rideOfferModel.from);
+        RideRequestModel rideRequestModel = rideRequestModels.get(position);
+        //holder.name.setText(rideRequestModel.driver);
+        holder.time.setText(rideRequestModel.date);
+        holder.location.setText("To: " + rideRequestModel.to + " From: " + rideRequestModel.from);
 
         holder.join.setVisibility(View.GONE);
 
 
-        Log.d(DEBUG, "recycler view item added: " + rideOfferModel);
+        Log.d(DEBUG, "recycler view item added: " + rideRequestModel);
 
     }
 
     @Override
     public int getItemCount() {
         //number of recylerviews to have
-        return rideOfferModels.size();
+        return rideRequestModels.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
