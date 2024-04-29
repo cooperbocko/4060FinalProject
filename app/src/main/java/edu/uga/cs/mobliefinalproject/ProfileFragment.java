@@ -105,39 +105,6 @@ public class ProfileFragment extends Fragment {
         greeting = rootView.findViewById(R.id.textView);
         totalRides = rootView.findViewById(R.id.textView3);
         logout = rootView.findViewById(R.id.button4);
-        verifiedRides = rootView.findViewById(R.id.button5);
-        requestAcc = rootView.findViewById(R.id.button7);
-        ridesAcc = rootView.findViewById(R.id.button6);
-
-        ridesAcc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(rootView.getContext(), SettingsActivity.class);
-                i.putExtra(BUTTON_TYPE, "rides accepted");
-                startActivity(i);
-
-            }
-        });
-        requestAcc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(rootView.getContext(), SettingsActivity.class);
-                i.putExtra(BUTTON_TYPE, "request accepted");
-                startActivity(i);
-
-            }
-        });
-
-
-        verifiedRides.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(rootView.getContext(), SettingsActivity.class);
-                i.putExtra(BUTTON_TYPE, "verified rides");
-                startActivity(i);
-
-            }
-        });
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
