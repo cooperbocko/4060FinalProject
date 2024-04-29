@@ -220,17 +220,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
         holder.name.setText(rideOfferModel.driver);
         holder.time.setText(rideOfferModel.date);
         holder.location.setText("To: " + rideOfferModel.to + " From: " + rideOfferModel.from);
-
-
-        //holder.name.setText();
-        //holder.name.setText();
-        //holder.name.setText();
-
         holder.join.setText("Join");
-
-
-
-
 
         Log.d(DEBUG, "recycler view item added: " + rideOfferModel);
 
@@ -258,7 +248,45 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             join.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("handlejoiningride", "Successfully joined ride");
+                    //update request
+                    int position = getAdapterPosition();
+                    RideOfferModel rideOfferModel = rideOfferModels.get(position);
+                    rideOfferModel.setAccepted(true);
+                    rideOfferModel.setAcceptedBy(CurrentUser.email);
+                    EditOfferDialogFragment.updateOffer(position, rideOfferModel, 0);
+
+                    //create verify
+                    VerifyModel verifyModel = new VerifyModel(rideOfferModel.getDriver(), CurrentUser.email, false, false);
+                    createVerify(verifyModel);
+
+                    Log.d(DEBUG, "Successfully joined offer");
+                }
+
+                private void createVerify(VerifyModel verifyModel) {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference("verify");
+
+                    myRef.push().setValue( verifyModel )
+                            .addOnSuccessListener( new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    // Show a quick confirmation
+                                    //Toast.makeText(getActivity(), "Ride offer created: " + rideOfferModel,
+                                    //        Toast.LENGTH_SHORT).show();
+                                    Log.d(DEBUG, "New verify created: " + verifyModel);
+
+                                    // Clear the EditTexts for next use.
+
+                                }
+                            })
+                            .addOnFailureListener( new OnFailureListener() {
+                                @Override
+                                public void onFailure( @NonNull Exception e ) {
+                                    //Toast.makeText( getActivity(), "Failed to create a ride offer: " + rideOfferModel,
+                                    //        Toast.LENGTH_SHORT).show();
+                                    Log.d(DEBUG, "Failed to create verify: " + verifyModel);
+                                }
+                            });
                 }
             });
 
@@ -439,8 +467,6 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
                 }
             });
 
-            //
-            //Add To DB in this meathod
             builder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -493,7 +519,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
                     });
         }
 
-        public void updateOffer( int position, RideOfferModel rideOfferModel, int action ) {
+        public static void updateOffer( int position, RideOfferModel rideOfferModel, int action ) {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             //update
             if( action == 0) {

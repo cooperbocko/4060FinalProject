@@ -21,6 +21,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,7 +39,7 @@ public class RidesFragment extends Fragment {
     private static final String DEBUG = "RideRequestsFragment";
     public static final String DIALOG_TAG = "CustomFragDiolog";
     private FirebaseDatabase database;
-    private List<RideRequestModel> rideRequestModelList;
+    private ArrayList<RideRequestModel> rideRequestModelList;
 
 
     public RidesFragment() {
@@ -64,43 +66,6 @@ public class RidesFragment extends Fragment {
         rideRequestModelList = new ArrayList<>();
 
 
-        //database stuff
-        database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("riderequests");
-
-        //gets non-accepted and non-owned ride requests
-        myRef.addValueEventListener( new ValueEventListener() {
-
-            @Override
-            public void onDataChange( @NonNull DataSnapshot snapshot ) {
-                // Once we have a DataSnapshot object, we need to iterate over the elements and place them on our job lead list.
-                rideRequestModelList.clear(); // clear the current content; this is inefficient!
-                for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
-                    RideRequestModel rideRequestModel = postSnapshot.getValue(RideRequestModel.class);
-                    rideRequestModel.setKey( postSnapshot.getKey() );
-
-                    //check if accepted or your own offer
-                    if (rideRequestModel.isAccepted() || rideRequestModel.getRider().equals(CurrentUser.email)) {
-                        Log.d(DEBUG, "Request not added: " + rideRequestModel);
-                        continue;
-                    } else {
-                        //add request to list
-                        rideRequestModelList.add( rideRequestModel );
-                        Log.d(DEBUG, "Request added: " + rideRequestModel);
-
-                    }
-                }
-
-                //implement this later
-                //Log.d( DEBUG_TAG, "ValueEventListener: notifying recyclerAdapter" );
-                //recyclerAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled( @NonNull DatabaseError databaseError ) {
-                Log.d(DEBUG, "Error reading requests from database: " + databaseError);
-            }
-        } );
     }
 
     @Override
@@ -113,13 +78,51 @@ public class RidesFragment extends Fragment {
 
         FloatingActionButton addRequest = rootView.findViewById(R.id.floatingActionButton2);
 
-        /*
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity(), rideRequestModelList,
+
+        RidesRecyclerViewAdapter adapter = new RidesRecyclerViewAdapter(getActivity(), rideRequestModelList,
                 this);
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-         */
+
+
+        //database stuff
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("riderequests");
+
+        //gets non-accepted ride requests
+        myRef.addValueEventListener( new ValueEventListener() {
+
+            @Override
+            public void onDataChange( @NonNull DataSnapshot snapshot ) {
+                // Once we have a DataSnapshot object, we need to iterate over the elements and place them on our job lead list.
+                rideRequestModelList.clear(); // clear the current content; this is inefficient!
+                for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
+                    RideRequestModel rideRequestModel = postSnapshot.getValue(RideRequestModel.class);
+                    rideRequestModel.setKey( postSnapshot.getKey() );
+
+                    //check if accepted or your own offer
+                    if (rideRequestModel.isAccepted()) {
+                        Log.d(DEBUG, "Request not added: " + rideRequestModel);
+                        continue;
+                    } else {
+                        //add request to list
+                        rideRequestModelList.add( rideRequestModel );
+                        Log.d(DEBUG, "Request added: " + rideRequestModel);
+
+                    }
+                }
+
+                //implement this later
+                Log.d( DEBUG, "ValueEventListener: notifying recyclerAdapter" );
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled( @NonNull DatabaseError databaseError ) {
+                Log.d(DEBUG, "Error reading requests from database: " + databaseError);
+            }
+        } );
 
         //request ride listener
         addRequest.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +136,6 @@ public class RidesFragment extends Fragment {
         return rootView;
     }
 
-/*
     @Override
     public void onItemClick(int position) {
 
@@ -141,11 +143,6 @@ public class RidesFragment extends Fragment {
                 DIALOG_TAG);
 
     }
-
- */
-
-
-
 }
 //
 //
@@ -155,7 +152,8 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
 
     private final RecyclerViewInterfave recyclerViewInterfave;
     Context context;
-    ArrayList<RideRequestModel> rideRequestModels;
+    static ArrayList<RideRequestModel> rideRequestModels;
+    private final static String DEBUG = "Rides Recycler View Adapter";
 
     public RidesRecyclerViewAdapter(Context context,
                                     ArrayList<RideRequestModel> rideRequestModels,
@@ -163,6 +161,7 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
         this.context = context;
         this.rideRequestModels = rideRequestModels;
         this.recyclerViewInterfave = recyclerViewInterfave;
+        Log.d(DEBUG, "adapter created");
     }
 
     @NonNull
@@ -174,6 +173,7 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.recycler_view, parent, false);
 
+        Log.d(DEBUG, "On Create View Holder");
         return new RidesRecyclerViewAdapter.MyViewHolder(view, recyclerViewInterfave);
     }
 
@@ -181,20 +181,18 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
     public void onBindViewHolder(@NonNull RidesRecyclerViewAdapter.MyViewHolder holder,
                                  int position) {
         //assign values to each row as they reenter screen
-
-        //holder.name.setText();
-        //holder.time.setText();
-        //holder.location.setText();
-
-
+        RideRequestModel rideRequestModel = rideRequestModels.get(position);
+        holder.name.setText(rideRequestModel.rider);
+        holder.time.setText(rideRequestModel.date);
+        holder.location.setText("To: " + rideRequestModel.to + " From: " + rideRequestModel.from);
         holder.button.setText("Drive!");
 
+        Log.d(DEBUG, "recycler view item added: " + rideRequestModel);
     }
 
     @Override
     public int getItemCount() {
         //number of recylerviews to have
-        //Change this number to length of array list
         return rideRequestModels.size();
     }
 
@@ -212,6 +210,51 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
             location = itemView.findViewById(R.id.textView5);
             button = itemView.findViewById(R.id.button8);
 
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //update request
+                    int position = getAdapterPosition();
+                    RideRequestModel rideRequestModel = rideRequestModels.get(position);
+                    rideRequestModel.setAccepted(true);
+                    rideRequestModel.setAcceptedBy(CurrentUser.email);
+                    EditRequestDialogFragment.updateRequest(position, rideRequestModel, 0);
+
+                    //create verify
+                    VerifyModel verifyModel = new VerifyModel(CurrentUser.email, rideRequestModel.getRider(), false, false);
+                    createVerify(verifyModel);
+
+                    Log.d(DEBUG, "Successfully joined request");
+                }
+
+                private void createVerify(VerifyModel verifyModel) {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference("verify");
+
+                    myRef.push().setValue( verifyModel )
+                            .addOnSuccessListener( new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    // Show a quick confirmation
+                                    //Toast.makeText(getActivity(), "Ride offer created: " + rideOfferModel,
+                                    //        Toast.LENGTH_SHORT).show();
+                                    Log.d(DEBUG, "New verify created: " + verifyModel);
+
+                                    // Clear the EditTexts for next use.
+
+                                }
+                            })
+                            .addOnFailureListener( new OnFailureListener() {
+                                @Override
+                                public void onFailure( @NonNull Exception e ) {
+                                    //Toast.makeText( getActivity(), "Failed to create a ride offer: " + rideOfferModel,
+                                    //        Toast.LENGTH_SHORT).show();
+                                    Log.d(DEBUG, "Failed to create verify: " + verifyModel);
+                                }
+                            });
+                }
+            });
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -224,6 +267,7 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
                     }
                 }
             });
+
 
         }
 
@@ -262,19 +306,22 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
                     }
                 });
 
-                //
-                //Add To DB in this method
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String strFrom = from.getText().toString();
                         String strTo = to.getText().toString();
-                        String strDate = date.getText().toString();
-                        String strTime = time.getText().toString();
+                        String strDate = date.getText().toString() + " || " + time.getText().toString();
+
+
+                        //post to db
+                        RideRequestModel rideRequestModel = new RideRequestModel(CurrentUser.email, "1", strFrom, strTo, strDate, false, "none");
+                        createNewRequest(rideRequestModel);
+
 
 
                         Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
-                                        + strDate + " Time: " + strTime,
+                                        + strDate,
                                 Toast.LENGTH_SHORT).show();
 
                         // We forcefully dismiss and remove the Dialog, so it
@@ -282,8 +329,36 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
                         dialog.dismiss();
                     }
                 });
+
                 // Create the AlertDialog and show it
                 return builder.create();
+            }
+
+            private void createNewRequest(RideRequestModel rideRequestModel) {
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("riderequests");
+
+                myRef.push().setValue( rideRequestModel )
+                        .addOnSuccessListener( new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Show a quick confirmation
+                                //Toast.makeText(getActivity(), "Ride offer created: " + rideOfferModel,
+                                //        Toast.LENGTH_SHORT).show();
+                                Log.d(DEBUG, "New ride request created: " + rideRequestModel);
+
+                                // Clear the EditTexts for next use.
+
+                            }
+                        })
+                        .addOnFailureListener( new OnFailureListener() {
+                            @Override
+                            public void onFailure( @NonNull Exception e ) {
+                                //Toast.makeText( getActivity(), "Failed to create a ride offer: " + rideOfferModel,
+                                //        Toast.LENGTH_SHORT).show();
+                                Log.d(DEBUG, "Failed to create ride request: " + rideRequestModel);
+                            }
+                        });
             }
         }
 
@@ -293,7 +368,9 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
         //edit request dialog
         //Offer Dialog Handler
         public static class EditRequestDialogFragment extends DialogFragment {
-            public static EditRequestDialogFragment newInstance() {
+            int position;
+            public EditRequestDialogFragment newInstance(int position) {
+                this.position = position;
                 return new EditRequestDialogFragment();
             }
 
@@ -312,12 +389,11 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setView(layout);
                 // Now configure the AlertDialog
-                builder.setTitle("Edit Request Ride");
+                builder.setTitle("Edit Request");
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        // We forcefully dismiss and remove the Dialog, so it
-                        // cannot be used again
+
                         dialog.dismiss();
                     }
                 });
@@ -325,32 +401,26 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
                 builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        updateRequest(position, rideRequestModels.get(position), 1);
                         /** functions to delete request view*/
                         dialog.dismiss();
                     }
                 });
 
-                //
-                //Add To DB in this meathod
+
                 builder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String strFrom = from.getText().toString();
-                        String strTo = to.getText().toString();
-                        String strDate = date.getText().toString() + " || " + time.getText().toString();
+                        RideRequestModel editRequest = new RideRequestModel(CurrentUser.email,"1", from.getText().toString(), to.getText().toString(), date.getText().toString() + " || " + time.getText().toString(), false, "none");
+                        editRequest.setKey(rideRequestModels.get(position).getKey());
 
-                        /*
-                        //post to db
-                        RideRequestModel rideRequestModel = new RideRequestModel();
-                        (CurrentUser.email, strFrom, strTo, strDate, false, "none");
-                        createNewRequest(rideRequestModel);
+                        updateRequest(position, editRequest, 0);
 
-                         */
 
-                        Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
-                                        + strDate,
-                                Toast.LENGTH_SHORT).show();
+
+                        //Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
+                        //                + strDate + " Seats: " + strSeats,
+                        //        Toast.LENGTH_SHORT).show();
 
                         // We forcefully dismiss and remove the Dialog, so it
                         // cannot be used again
@@ -359,6 +429,88 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
                 });
                 // Create the AlertDialog and show it
                 return builder.create();
+            }
+
+            public static void updateRequest( int position, RideRequestModel rideRequestModel, int action ) {
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                //update
+                if( action == 0) {
+                    Log.d( DEBUG, "Updating request at: " + position + "(" + rideRequestModel + ")" );
+
+                    // Update the recycler view to show the changes in the updated job lead in that view
+                    //recycler.notifyItemChanged( position );
+
+                    // Update this job lead in Firebase
+                    // Note that we are using a specific key (one child in the list)
+                    DatabaseReference ref = database
+                            .getReference()
+                            .child( "riderequests" )
+                            .child( rideRequestModel.getKey() );
+
+                    // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+                    // to maintain job leads.
+                    ref.addListenerForSingleValueEvent( new ValueEventListener() {
+                        @Override
+                        public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                            dataSnapshot.getRef().setValue( rideRequestModel ).addOnSuccessListener( new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d( DEBUG, "updated request at: " + position + "(" + rideRequestModel + ")" );
+                                    //Toast.makeText(getActivity(), "Offer updated for " + rideOfferModel,
+                                    //        Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled( @NonNull DatabaseError databaseError ) {
+                            Log.d( DEBUG, "failed to update request at: " + position + "(" + rideRequestModel + ")" );
+                            //Toast.makeText(getActivity(), "Failed to update " + rideOfferModel,
+                            //        Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    rideRequestModels.remove(position);
+                }
+                else if( action == 1 ) {
+                    Log.d( DEBUG, "Deleting request at: " + position + "(" + rideRequestModel + ")" );
+
+                    // remove the deleted job lead from the list (internal list in the App)
+                    rideRequestModels.remove( position);
+
+
+                    // Update the recycler view to remove the deleted job lead from that view
+                    //recyclerAdapter.notifyItemRemoved( position );
+
+                    // Delete this job lead in Firebase.
+                    // Note that we are using a specific key (one child in the list)
+                    DatabaseReference ref = database
+                            .getReference()
+                            .child( "riderequests" )
+                            .child( rideRequestModel.getKey() );
+
+                    // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+                    // to maintain job leads.
+                    ref.addListenerForSingleValueEvent( new ValueEventListener() {
+                        @Override
+                        public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                            dataSnapshot.getRef().removeValue().addOnSuccessListener( new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d( DEBUG, "deleted request at: " + position + "(" + rideRequestModel + ")" );
+                                    //Toast.makeText(getActivity(), "Job lead deleted for " + jobLead.getCompanyName(),
+                                    //        Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled( @NonNull DatabaseError databaseError ) {
+                            Log.d( DEBUG, "failed to delete request at: " + position + "(" + rideRequestModel + ")" );
+                            //Toast.makeText(getApplicationContext(), "Failed to delete " + jobLead.getCompanyName(),
+                            //        Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
 
         }
