@@ -58,13 +58,15 @@ public class HomeActivity extends AppCompatActivity {
                         tab.setText("REQUESTS");
                     }
                     else if (position == 2){
-                        tab.setText("PROFILE");
-                    }else if (position == 3){
                         tab.setText("ACCEPTED RIDES");
-                    }else if (position == 4){
+
+                    }else if (position == 3){
                         tab.setText("ACCEPTED REQUESTS");
-                    }else{
+                    }else if (position == 4){
                         tab.setText("VERIFIED");
+                    }else{
+
+                        tab.setText("PROFILE");
                     }
                 })).attach();
     }
@@ -87,16 +89,17 @@ public class HomeActivity extends AppCompatActivity {
                 return RidesFragment.newInstance(position);
             }
             else if (position == 2) {
-                return ProfileFragment.newInstance(position);
-            }
-            else if (position == 3) {
                 return RidesAcceptedFragment.newInstance(position);
             }
-            else if (position == 4) {
+            else if (position == 3) {
                 return RequestAcceptedFragment.newInstance(position);
             }
-            else {
+            else if (position == 4) {
                 return VerifyFragment.newInstance(position);
+            }
+            else {
+
+                return ProfileFragment.newInstance(position);
             }
 
 
