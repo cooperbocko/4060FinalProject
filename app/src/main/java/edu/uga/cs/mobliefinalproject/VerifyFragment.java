@@ -160,7 +160,7 @@ class RecyclerViewAdapterVerify extends RecyclerView.Adapter<RecyclerViewAdapter
             title = itemView.findViewById(R.id.textView2);
             driveraccept = itemView.findViewById(R.id.textView4);
             rideraccept = itemView.findViewById(R.id.textView5);
-            verifyButton = itemView.findViewById(R.id.button3);
+            verifyButton = itemView.findViewById(R.id.button8);
 
             Log.d(DEBUG, "My view holder");
         }

@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment;
 import android.util.Log;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.util.StateSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,12 +32,14 @@ public class ProfileFragment extends Fragment {
 
     private static final String FRAGMENT_POSITION = "position";
     private static final String DEBUG = "Profile Fragment";
+
+  public static final String BUTTON_TYPE = "Button Type";
     private FirebaseDatabase database;
     private UserModel user;
 
     private TextView greeting, totalRides;
 
-    private Button logout;
+    private Button logout, requestAcc, ridesAcc, verifiedRides;
 
 
     public ProfileFragment() {
@@ -99,7 +103,39 @@ public class ProfileFragment extends Fragment {
         greeting = rootView.findViewById(R.id.textView);
         totalRides = rootView.findViewById(R.id.textView3);
         logout = rootView.findViewById(R.id.button4);
+        verifiedRides = rootView.findViewById(R.id.button5);
+        requestAcc = rootView.findViewById(R.id.button7);
+        ridesAcc = rootView.findViewById(R.id.button6);
 
+        ridesAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(rootView.getContext(), SettingsActivity.class);
+                i.putExtra(BUTTON_TYPE, "rides accepted");
+                startActivity(i);
+
+            }
+        });
+        requestAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(rootView.getContext(), SettingsActivity.class);
+                i.putExtra(BUTTON_TYPE, "request accepted");
+                startActivity(i);
+
+            }
+        });
+
+
+        verifiedRides.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(rootView.getContext(), SettingsActivity.class);
+                i.putExtra(BUTTON_TYPE, "verified rides");
+                startActivity(i);
+
+            }
+        });
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
