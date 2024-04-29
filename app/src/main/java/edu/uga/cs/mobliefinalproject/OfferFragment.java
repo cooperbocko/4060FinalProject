@@ -49,6 +49,8 @@ public class OfferFragment extends Fragment implements RecyclerViewInterfave{
 
     public static final String DIALOG_TAG = "CustomFragDiolog";
     private ArrayList<RideOfferModel> rideOfferModelList;
+
+
     private FirebaseDatabase database;
     FloatingActionButton options ;
 
@@ -138,14 +140,8 @@ public class OfferFragment extends Fragment implements RecyclerViewInterfave{
         } );
 
 
-
-
         // Floating Action Buttons
          options = rootView.findViewById(R.id.floatingActionButton);
-
-
-
-
 
 
        // AtomicReference<Boolean> visible = new AtomicReference<>(false);
@@ -157,14 +153,6 @@ public class OfferFragment extends Fragment implements RecyclerViewInterfave{
                         DIALOG_TAG);
             }
         });
-
-
-
-
-
-
-
-
 
 
 
@@ -190,6 +178,8 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
     private final RecyclerViewInterfave recyclerViewInterfave;
     Context context;
     ArrayList<RideOfferModel> rideOfferModels;
+
+    ArrayList<UserModel> userModels;
     private final static String DEBUG = "Recycler View Adapter";
 
     public RecyclerViewAdapter(Context context, ArrayList<RideOfferModel> rideOfferModels,
@@ -217,7 +207,8 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
         //assign values to each row as they reenter screen
 
         RideOfferModel rideOfferModel = rideOfferModels.get(position);
-        holder.name.setText(rideOfferModel.driver);
+        //UserModel user = userModels.get(email);
+       holder.name.setText(rideOfferModel.driver);
         holder.time.setText(rideOfferModel.date);
         holder.location.setText("To: " + rideOfferModel.to + " From: " + rideOfferModel.from);
 
@@ -226,10 +217,13 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
         //holder.name.setText();
         //holder.name.setText();
 
-        holder.join.setText("Join");
 
-
-
+        if (CurrentUser.email.toString() != holder.name.toString()) {
+            holder.join.setVisibility(View.VISIBLE);
+            holder.join.setText("Join");
+        } else {
+            holder.join.setVisibility(View.GONE);
+        }
 
 
         Log.d(DEBUG, "recycler view item added: " + rideOfferModel);
@@ -245,7 +239,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
         private TextView name, time, location;
-        private Button join;
+       private Button join;
 
         public MyViewHolder(@NonNull View itemView, RecyclerViewInterfave recyclerViewInterfave) {
             super(itemView);
@@ -253,7 +247,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             name = itemView.findViewById(R.id.textView2);
             time = itemView.findViewById(R.id.textView4);
             location = itemView.findViewById(R.id.textView5);
-            join = itemView.findViewById(R.id.button8);
+            join = (Button) itemView.findViewById(R.id.button3);
 
             join.setOnClickListener(new View.OnClickListener() {
                 @Override

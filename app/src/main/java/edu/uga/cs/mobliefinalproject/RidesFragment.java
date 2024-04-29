@@ -62,46 +62,9 @@ public class RidesFragment extends Fragment {
 
         //list of ride offers
         rideRequestModelList = new ArrayList<>();
-
-
-        //database stuff
-        database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("riderequests");
-
-        //gets non-accepted and non-owned ride requests
-        myRef.addValueEventListener( new ValueEventListener() {
-
-            @Override
-            public void onDataChange( @NonNull DataSnapshot snapshot ) {
-                // Once we have a DataSnapshot object, we need to iterate over the elements and place them on our job lead list.
-                rideRequestModelList.clear(); // clear the current content; this is inefficient!
-                for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
-                    RideRequestModel rideRequestModel = postSnapshot.getValue(RideRequestModel.class);
-                    rideRequestModel.setKey( postSnapshot.getKey() );
-
-                    //check if accepted or your own offer
-                    if (rideRequestModel.isAccepted() || rideRequestModel.getRider().equals(CurrentUser.email)) {
-                        Log.d(DEBUG, "Request not added: " + rideRequestModel);
-                        continue;
-                    } else {
-                        //add request to list
-                        rideRequestModelList.add( rideRequestModel );
-                        Log.d(DEBUG, "Request added: " + rideRequestModel);
-
-                    }
-                }
-
-                //implement this later
-                //Log.d( DEBUG_TAG, "ValueEventListener: notifying recyclerAdapter" );
-                //recyclerAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled( @NonNull DatabaseError databaseError ) {
-                Log.d(DEBUG, "Error reading requests from database: " + databaseError);
-            }
-        } );
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -120,6 +83,44 @@ public class RidesFragment extends Fragment {
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
          */
+            //database stuff
+            database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("riderequests");
+
+            //gets non-accepted and non-owned ride requests
+            myRef.addValueEventListener( new ValueEventListener() {
+
+                @Override
+                public void onDataChange( @NonNull DataSnapshot snapshot ) {
+                    // Once we have a DataSnapshot object, we need to iterate over the elements and place them on our job lead list.
+                    rideRequestModelList.clear(); // clear the current content; this is inefficient!
+                    for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
+                        RideRequestModel rideRequestModel = postSnapshot.getValue(RideRequestModel.class);
+                        rideRequestModel.setKey( postSnapshot.getKey() );
+
+                        //check if accepted or your own offer
+                        if (rideRequestModel.isAccepted() || rideRequestModel.getRider().equals(CurrentUser.email)) {
+                            Log.d(DEBUG, "Request not added: " + rideRequestModel);
+                            continue;
+                        } else {
+                            //add request to list
+                            rideRequestModelList.add( rideRequestModel );
+                            Log.d(DEBUG, "Request added: " + rideRequestModel);
+
+                        }
+                    }
+
+                    //implement this later
+                    //Log.d( DEBUG_TAG, "ValueEventListener: notifying recyclerAdapter" );
+                    //recyclerAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled( @NonNull DatabaseError databaseError ) {
+                    Log.d(DEBUG, "Error reading requests from database: " + databaseError);
+                }
+            } );
+
 
         //request ride listener
         addRequest.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +211,7 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
             name = itemView.findViewById(R.id.textView2);
             time = itemView.findViewById(R.id.textView4);
             location = itemView.findViewById(R.id.textView5);
-            button = itemView.findViewById(R.id.button8);
+            button = itemView.findViewById(R.id.button3);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
