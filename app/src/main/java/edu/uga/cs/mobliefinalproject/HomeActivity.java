@@ -57,8 +57,14 @@ public class HomeActivity extends AppCompatActivity {
                     } else if (position == 1) {
                         tab.setText("REQUESTS");
                     }
-                    else{
+                    else if (position == 2){
                         tab.setText("PROFILE");
+                    }else if (position == 3){
+                        tab.setText("ACCEPTED RIDES");
+                    }else if (position == 4){
+                        tab.setText("ACCEPTED REQUESTS");
+                    }else{
+                        tab.setText("VERIFIED");
                     }
                 })).attach();
     }
@@ -80,14 +86,26 @@ public class HomeActivity extends AppCompatActivity {
             } else if (position == 1) {
                 return RidesFragment.newInstance(position);
             }
+            else if (position == 2) {
+                return ProfileFragment.newInstance(position);
+            }
+            else if (position == 3) {
+                return RidesAcceptedFragment.newInstance(position);
+            }
+            else if (position == 4) {
+                return RequestAcceptedFragment.newInstance(position);
+            }
+            else {
+                return VerifyFragment.newInstance(position);
+            }
 
-            return ProfileFragment.newInstance(position);
+
 
         }
 
         @Override
         public int getItemCount() {
-            return 3;
+            return 6;
         }
     }
 
