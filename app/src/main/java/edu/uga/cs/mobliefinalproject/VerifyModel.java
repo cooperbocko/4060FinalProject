@@ -7,6 +7,7 @@ public class VerifyModel {
     public String rider;
     public boolean driverAccepted;
     public boolean riderAccepted;
+    public String type;
 
     public VerifyModel(String driver, String rider, boolean driverAccepted, boolean riderAccepted) {
         this.key = null;
@@ -15,6 +16,7 @@ public class VerifyModel {
         this.rider = rider;
         this.driverAccepted = driverAccepted;
         this.riderAccepted = riderAccepted;
+        this.type = null;
     }
 
     public VerifyModel() {
@@ -24,6 +26,7 @@ public class VerifyModel {
         this.rider = null;
         this.driverAccepted = false;
         this.riderAccepted = false;
+        this.type = null;
     }
 
     public String getKey() {
@@ -78,5 +81,13 @@ public class VerifyModel {
 
     public void setRefKey(String refKey) {
         this.refKey = refKey;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

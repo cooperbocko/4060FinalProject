@@ -257,6 +257,8 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
 
                     //create verify
                     VerifyModel verifyModel = new VerifyModel(rideOfferModel.getDriver(), CurrentUser.email, false, false);
+                    verifyModel.setRefKey(rideOfferModel.getKey());
+                    verifyModel.setType("rideoffers");
                     createVerify(verifyModel);
 
                     Log.d(DEBUG, "Successfully joined offer");

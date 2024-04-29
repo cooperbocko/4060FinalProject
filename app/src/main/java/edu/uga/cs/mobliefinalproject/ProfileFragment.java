@@ -76,6 +76,8 @@ public class ProfileFragment extends Fragment {
                     if (userModel.getEmail().equals(CurrentUser.email)) {
                         //set the profile data and update the usermodel in this fragment
                         user = userModel;
+                        greeting.setText("Welcome, " + user.getEmail());
+                        totalRides.setText("Points: " + user.getPoints());
                         Log.d(DEBUG, "Current user data found: " + userModel.toString());
                         break;
                     } else {

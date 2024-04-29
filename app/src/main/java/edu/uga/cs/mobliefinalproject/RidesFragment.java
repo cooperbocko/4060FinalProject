@@ -80,7 +80,7 @@ public class RidesFragment extends Fragment {
 
 
         RidesRecyclerViewAdapter adapter = new RidesRecyclerViewAdapter(getActivity(), rideRequestModelList,
-                this);
+                (RecyclerViewInterfave) this);
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -222,6 +222,8 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
 
                     //create verify
                     VerifyModel verifyModel = new VerifyModel(CurrentUser.email, rideRequestModel.getRider(), false, false);
+                    verifyModel.setRefKey(rideRequestModel.getKey());
+                    verifyModel.setType("riderequests");
                     createVerify(verifyModel);
 
                     Log.d(DEBUG, "Successfully joined request");
