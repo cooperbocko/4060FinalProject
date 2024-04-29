@@ -84,12 +84,13 @@ public class RidesAcceptedFragment extends Fragment implements RecyclerViewInter
 
                     //check if accepted and if driver/accepter
                     if (rideOfferModel.isAccepted() && (rideOfferModel.driver.equals(CurrentUser.email) || rideOfferModel.acceptedBy.equals(CurrentUser.email))) {
-                        Log.d(DEBUG, "Ride Offer not added: " + rideOfferModel);
-                        continue;
-                    } else {
                         //add offer to list
                         rideOfferModelList.add( rideOfferModel );
                         Log.d(DEBUG, "Ride Offer added: " + rideOfferModel);
+
+                    } else {
+                        Log.d(DEBUG, "Ride Offer not added: " + rideOfferModel);
+                        continue;
 
                     }
                 }

@@ -84,13 +84,13 @@ public class RequestAcceptedFragment extends Fragment implements RecyclerViewInt
 
                     //check if accepted and if user is rider/accepter
                     if (rideRequestModel.isAccepted() && (rideRequestModel.getRider().equals(CurrentUser.email) || rideRequestModel.getAcceptedBy().equals(CurrentUser.email))) {
-                        Log.d(DEBUG, "Request not added: " + rideRequestModel);
-                        continue;
-                    } else {
-                        //add request to list
                         rideRequestModelList.add( rideRequestModel );
                         Log.d(DEBUG, "Request added: " + rideRequestModel);
-
+                        Log.d(DEBUG, "Request not added: " + rideRequestModel);
+                    } else {
+                        //add request to list
+                        Log.d(DEBUG, "Request not added: " + rideRequestModel);
+                        continue;
                     }
                 }
 
@@ -153,7 +153,7 @@ class RecyclerViewAdapterRequestAccept extends RecyclerView.Adapter<RecyclerView
         //assign values to each row as they reenter screen
 
         RideRequestModel rideRequestModel = rideRequestModels.get(position);
-        //holder.name.setText(rideRequestModel.driver);
+        holder.name.setText(rideRequestModel.rider);
         holder.time.setText(rideRequestModel.date);
         holder.location.setText("To: " + rideRequestModel.to + " From: " + rideRequestModel.from);
 

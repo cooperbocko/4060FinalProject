@@ -253,6 +253,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
                     RideOfferModel rideOfferModel = rideOfferModels.get(position);
                     rideOfferModel.setAccepted(true);
                     rideOfferModel.setAcceptedBy(CurrentUser.email);
+                    Log.d(DEBUG, "Ride Offer Accepted: " + rideOfferModel.getAcceptedBy());
                     EditOfferDialogFragment.updateOffer(position, rideOfferModel, 0);
 
                     //create verify

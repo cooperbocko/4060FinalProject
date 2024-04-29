@@ -36,6 +36,7 @@ public class VerifyFragment extends Fragment {
     private static final String FRAGMENT_POSITION = "position";
     private static final String DIALOG_TAG = "CustomFragDiolog";
     private ArrayList<VerifyModel> verifyModelArrayList;
+    private ArrayList<UserModel> userModelArrayList;
     private FirebaseDatabase database;
 
     public VerifyFragment() {
@@ -58,6 +59,7 @@ public class VerifyFragment extends Fragment {
         }
 
         verifyModelArrayList = new ArrayList<>();
+        userModelArrayList = new ArrayList<>();
     }
 
     @Override
@@ -68,13 +70,15 @@ public class VerifyFragment extends Fragment {
 
         RecyclerView recyclerView = rootView.findViewById(R.id.rv_1);
 
-        RecyclerViewAdapterVerify adapter = new RecyclerViewAdapterVerify(getActivity(), verifyModelArrayList );
+        RecyclerViewAdapterVerify adapter = new RecyclerViewAdapterVerify(getActivity(), verifyModelArrayList, userModelArrayList);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         //database stuff
         database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("verify");
+        DatabaseReference myref2 = database.getReference("users");
+
 
         //gets non-accepted offers
         myRef.addValueEventListener( new ValueEventListener() {
@@ -107,6 +111,24 @@ public class VerifyFragment extends Fragment {
             }
         } );
 
+        myref2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                userModelArrayList.clear();
+                for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
+                    UserModel userModel = postSnapshot.getValue(UserModel.class);
+                    userModel.setKey( postSnapshot.getKey() );
+
+                    userModelArrayList.add(userModel);
+                    Log.d(DEBUG, "user added: " + userModel);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
         return rootView;
     }
 }
@@ -114,12 +136,13 @@ public class VerifyFragment extends Fragment {
 class RecyclerViewAdapterVerify extends RecyclerView.Adapter<RecyclerViewAdapterVerify.MyViewHolderVerify> {
     Context context;
     static ArrayList<VerifyModel> verifyModelArrayList;
-    static ArrayList<UserModel> userModelArrayList = new ArrayList<>();
+    static ArrayList<UserModel> userModelArrayList;
     private final static String DEBUG = "Recycler View Adapter Verify";
 
-    public RecyclerViewAdapterVerify(Context context, ArrayList<VerifyModel> verifyModels) {
+    public RecyclerViewAdapterVerify(Context context, ArrayList<VerifyModel> verifyModels, ArrayList<UserModel> userModelArrayList) {
         this.context = context;
         this.verifyModelArrayList = verifyModels;
+        this.userModelArrayList = userModelArrayList;
         Log.d(DEBUG, "Adapter created");
     }
 
@@ -188,10 +211,10 @@ class RecyclerViewAdapterVerify extends RecyclerView.Adapter<RecyclerViewAdapter
                         } else {
                             //means that both will end up being verified
                             //update user points
-                            getUsers();
                             UserModel driver = new UserModel();
                             UserModel rider = new UserModel();
                             for (int i = 0; i < userModelArrayList.size(); i++) {
+                                Log.d(DEBUG, "getting user: " + userModelArrayList.get(i));
                                 if (userModelArrayList.get(i).getEmail().equals(verifyModel.driver)){
                                     driver = userModelArrayList.get(i);
                                 } else if (userModelArrayList.get(i).getEmail().equals(verifyModel.rider)){
@@ -214,31 +237,6 @@ class RecyclerViewAdapterVerify extends RecyclerView.Adapter<RecyclerViewAdapter
 
                 }
                 //db calls
-                //get users
-                public void getUsers(){
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("users");
-                    myRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            userModelArrayList.clear();
-                            for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
-                                UserModel userModel = postSnapshot.getValue(UserModel.class);
-                                userModel.setKey( postSnapshot.getKey() );
-
-                                userModelArrayList.add(userModel);
-                                Log.d(DEBUG, "user added: " + userModel);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                        }
-                    });
-                }
-
-
-
             });
 
             Log.d(DEBUG, "My view holder");

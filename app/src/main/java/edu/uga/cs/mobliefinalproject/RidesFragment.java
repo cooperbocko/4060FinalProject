@@ -218,6 +218,7 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
                     RideRequestModel rideRequestModel = rideRequestModels.get(position);
                     rideRequestModel.setAccepted(true);
                     rideRequestModel.setAcceptedBy(CurrentUser.email);
+                    Log.d(DEBUG, "Request accepted by: " + rideRequestModel.getAcceptedBy());
                     EditRequestDialogFragment.updateRequest(position, rideRequestModel, 0);
 
                     //create verify
