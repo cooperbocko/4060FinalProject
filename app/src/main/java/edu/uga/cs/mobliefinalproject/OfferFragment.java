@@ -189,7 +189,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
 
     private final RecyclerViewInterfave recyclerViewInterfave;
     Context context;
-    ArrayList<RideOfferModel> rideOfferModels;
+    static ArrayList<RideOfferModel> rideOfferModels;
     private final static String DEBUG = "Recycler View Adapter";
 
     public RecyclerViewAdapter(Context context, ArrayList<RideOfferModel> rideOfferModels,
@@ -393,7 +393,11 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
      */
     //Offer Dialog Handler
     public static class EditOfferDialogFragment extends DialogFragment {
-        public static EditOfferDialogFragment newInstance() {
+
+        int position;
+
+        public EditOfferDialogFragment newInstance(int postion) {
+            this.position = postion;
             return new EditOfferDialogFragment();
         }
 
@@ -419,6 +423,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
                 public void onClick(DialogInterface dialog, int whichButton) {
                     // We forcefully dismiss and remove the Dialog, so it
                     // cannot be used again
+
                     dialog.dismiss();
                 }
             });
@@ -426,6 +431,8 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+
+                    updateOffer(position, rideOfferModels.get(position), 1);
 
                     /** functions to delete offer view*/
                     dialog.dismiss();
@@ -437,20 +444,16 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             builder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String strFrom = from.getText().toString();
-                    String strTo = to.getText().toString();
-                    String strDate = date.getText().toString() + " || " + time.getText().toString();
-                    String strSeats = seats.getText().toString();
+                    RideOfferModel editRide = new RideOfferModel(CurrentUser.email, seats.getText().toString(), from.getText().toString(), to.getText().toString(), date.getText().toString() + " || " + time.getText().toString(), false, "none");
+                    editRide.setKey(rideOfferModels.get(position).getKey());
 
-                    //post to db
-                    RideOfferModel rideOfferModel = new RideOfferModel(CurrentUser.email, strSeats, strFrom, strTo, strDate, false, "none");
-                    createNewOffer(rideOfferModel);
+                    updateOffer(position, editRide, 0);
 
 
 
-                    Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
-                                    + strDate + " Seats: " + strSeats,
-                            Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
+                    //                + strDate + " Seats: " + strSeats,
+                    //        Toast.LENGTH_SHORT).show();
 
                     // We forcefully dismiss and remove the Dialog, so it
                     // cannot be used again
@@ -488,6 +491,88 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
                             Log.d(DEBUG, "Failed to create ride offer: " + rideOfferModel);
                         }
                     });
+        }
+
+        public void updateOffer( int position, RideOfferModel rideOfferModel, int action ) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            //update
+            if( action == 0) {
+                Log.d( DEBUG, "Updating offer at: " + position + "(" + rideOfferModel + ")" );
+
+                // Update the recycler view to show the changes in the updated job lead in that view
+                //recycler.notifyItemChanged( position );
+
+                // Update this job lead in Firebase
+                // Note that we are using a specific key (one child in the list)
+                DatabaseReference ref = database
+                        .getReference()
+                        .child( "rideoffers" )
+                        .child( rideOfferModel.getKey() );
+
+                // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+                // to maintain job leads.
+                ref.addListenerForSingleValueEvent( new ValueEventListener() {
+                    @Override
+                    public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                        dataSnapshot.getRef().setValue( rideOfferModel ).addOnSuccessListener( new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d( DEBUG, "updated offer at: " + position + "(" + rideOfferModel + ")" );
+                                //Toast.makeText(getActivity(), "Offer updated for " + rideOfferModel,
+                                //        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled( @NonNull DatabaseError databaseError ) {
+                        Log.d( DEBUG, "failed to update offer at: " + position + "(" + rideOfferModel + ")" );
+                        //Toast.makeText(getActivity(), "Failed to update " + rideOfferModel,
+                        //        Toast.LENGTH_SHORT).show();
+                    }
+                });
+                rideOfferModels.remove(position);
+            }
+            else if( action == 1 ) {
+                Log.d( DEBUG, "Deleting offer at: " + position + "(" + rideOfferModel + ")" );
+
+                // remove the deleted job lead from the list (internal list in the App)
+                rideOfferModels.remove( position);
+
+
+                // Update the recycler view to remove the deleted job lead from that view
+                //recyclerAdapter.notifyItemRemoved( position );
+
+                // Delete this job lead in Firebase.
+                // Note that we are using a specific key (one child in the list)
+                DatabaseReference ref = database
+                        .getReference()
+                        .child( "rideoffers" )
+                        .child( rideOfferModel.getKey() );
+
+                // This listener will be invoked asynchronously, hence no need for an AsyncTask class, as in the previous apps
+                // to maintain job leads.
+                ref.addListenerForSingleValueEvent( new ValueEventListener() {
+                    @Override
+                    public void onDataChange( @NonNull DataSnapshot dataSnapshot ) {
+                        dataSnapshot.getRef().removeValue().addOnSuccessListener( new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d( DEBUG, "deleted offer at: " + position + "(" + rideOfferModel + ")" );
+                                //Toast.makeText(getActivity(), "Job lead deleted for " + jobLead.getCompanyName(),
+                                //        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled( @NonNull DatabaseError databaseError ) {
+                        Log.d( DEBUG, "failed to delete offer at: " + position + "(" + rideOfferModel + ")" );
+                        //Toast.makeText(getApplicationContext(), "Failed to delete " + jobLead.getCompanyName(),
+                        //        Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
 
     }
