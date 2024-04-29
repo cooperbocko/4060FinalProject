@@ -58,13 +58,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.672" />
+        app:layout_constraintVertical_bias="0.662" />
 
     <Button
         android:id="@+id/button7"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
+        android:layout_marginBottom="12dp"
         android:text="Requests Accepted"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button6"
@@ -79,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
         android:layout_marginBottom="12dp"
-        android:text="Offers Accepted"
+        android:text="Rides Accepted"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button5"
         app:layout_constraintEnd_toEndOf="parent"

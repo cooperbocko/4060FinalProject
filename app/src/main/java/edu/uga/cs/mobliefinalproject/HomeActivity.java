@@ -53,9 +53,9 @@ public class HomeActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayout, vp,
                 ((tab, position) -> {
                     if(position == 0){
-                        tab.setText("OFFER");
-                    } else if (position == 1) {
                         tab.setText("RIDES");
+                    } else if (position == 1) {
+                        tab.setText("REQUESTS");
                     }
                     else{
                         tab.setText("PROFILE");

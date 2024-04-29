@@ -133,7 +133,7 @@ public class RidesFragment extends Fragment {
         return rootView;
     }
 
-
+/*
     @Override
     public void onItemClick(int position) {
 
@@ -141,6 +141,8 @@ public class RidesFragment extends Fragment {
                 DIALOG_TAG);
 
     }
+
+ */
 
 
 
@@ -185,7 +187,7 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
         //holder.location.setText();
 
 
-        holder.button.setText("Select");
+        holder.button.setText("Drive!");
 
     }
 
@@ -208,7 +210,7 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
             name = itemView.findViewById(R.id.textView2);
             time = itemView.findViewById(R.id.textView4);
             location = itemView.findViewById(R.id.textView5);
-            //  button = itemView.findViewById(R.id.button3);
+            button = itemView.findViewById(R.id.button8);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -338,12 +340,13 @@ class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecyclerViewAda
                         String strTo = to.getText().toString();
                         String strDate = date.getText().toString() + " || " + time.getText().toString();
 
-
+                        /*
                         //post to db
-                        RideRequestModel rideRequestModel = new RideRequestModel()
+                        RideRequestModel rideRequestModel = new RideRequestModel();
                         (CurrentUser.email, strFrom, strTo, strDate, false, "none");
                         createNewRequest(rideRequestModel);
 
+                         */
 
                         Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
                                         + strDate,
