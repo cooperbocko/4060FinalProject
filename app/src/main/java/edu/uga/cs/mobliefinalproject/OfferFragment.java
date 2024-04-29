@@ -226,7 +226,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
         //holder.name.setText();
         //holder.name.setText();
 
-        //holder.delete.setText("Edit");
+        holder.join.setText("Join");
 
 
 
@@ -245,7 +245,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
         private TextView name, time, location;
-        private Button delete;
+        private Button join;
 
         public MyViewHolder(@NonNull View itemView, RecyclerViewInterfave recyclerViewInterfave) {
             super(itemView);
@@ -253,7 +253,15 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             name = itemView.findViewById(R.id.textView2);
             time = itemView.findViewById(R.id.textView4);
             location = itemView.findViewById(R.id.textView5);
-            //delete = itemView.findViewById(R.id.button3);
+            join = itemView.findViewById(R.id.button8);
+
+            join.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("handlejoiningride", "Successfully joined ride");
+                }
+            });
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
