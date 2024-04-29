@@ -116,12 +116,12 @@ public class OfferFragment extends Fragment implements RecyclerViewInterfave{
 
                     //check if accepted
                     if (rideOfferModel.isAccepted()) {
-                        Log.d(DEBUG, "Offer not added: " + rideOfferModel);
+                        Log.d(DEBUG, "Ride Offer not added: " + rideOfferModel);
                         continue;
                     } else {
                         //add offer to list
                         rideOfferModelList.add( rideOfferModel );
-                        Log.d(DEBUG, "Offer added: " + rideOfferModel);
+                        Log.d(DEBUG, "Ride Offer added: " + rideOfferModel);
 
                     }
                 }
@@ -413,7 +413,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setView(layout);
             // Now configure the AlertDialog
-            builder.setTitle("Edit Offer Ride");
+            builder.setTitle("Edit Ride");
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int whichButton) {
