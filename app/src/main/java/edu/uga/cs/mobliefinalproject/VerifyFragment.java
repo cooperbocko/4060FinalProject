@@ -110,28 +110,32 @@ public class VerifyFragment extends Fragment {
     }
 }
 
-class RecyclerViewAdapterVerify extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
+class RecyclerViewAdapterVerify extends RecyclerView.Adapter<RecyclerViewAdapterVerify.MyViewHolderVerify> {
     Context context;
     ArrayList<VerifyModel> verifyModelArrayList;
     private final static String DEBUG = "Recycler View Adapter Verify";
 
-    public RecyclerViewAdapterVerify(Context context, ArrayList<VerifyModel> verifyModels){
+    public RecyclerViewAdapterVerify(Context context, ArrayList<VerifyModel> verifyModels) {
         this.context = context;
         this.verifyModelArrayList = verifyModels;
         Log.d(DEBUG, "Adapter created");
     }
+
     @NonNull
     @Override
-    public RecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerViewAdapterVerify.MyViewHolderVerify onCreateViewHolder(@NonNull ViewGroup parent,
+                                                                int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.recycler_view, parent, false);
 
         Log.d(DEBUG, "On Create View Holder");
-        return new RecyclerViewAdapter.MyViewHolder(view);
+        return new RecyclerViewAdapterVerify.MyViewHolderVerify(view);
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerViewAdapterVerify.MyViewHolderVerify holder,
+                                 int position) {
         VerifyModel verifyModel = verifyModelArrayList.get(position);
         holder.title.setText("Driver: " + verifyModel.driver + " Rider: " + verifyModel.rider);
         holder.driveraccept.setText(verifyModel.driver + ": " + verifyModel.driverAccepted);
@@ -139,14 +143,17 @@ class RecyclerViewAdapterVerify extends RecyclerView.Adapter<RecyclerViewAdapter
         holder.verifyButton.setText("verify");
     }
 
+
     @Override
     public int getItemCount() {
+
         return verifyModelArrayList.size();
     }
 
     public static class MyViewHolderVerify extends RecyclerView.ViewHolder {
         private TextView title, driveraccept, rideraccept;
         private Button verifyButton;
+
         public MyViewHolderVerify(@NonNull View itemView) {
             super(itemView);
 
