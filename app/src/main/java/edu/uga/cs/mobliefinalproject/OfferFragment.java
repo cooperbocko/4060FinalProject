@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -41,18 +43,15 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class OfferFragment extends Fragment {
+public class OfferFragment extends Fragment implements RecyclerViewInterfave{
     private static final String FRAGMENT_POSITION = "position";
     private static final String DEBUG = "OfferFragment";
 
-    private static final String DIALOG_TAG = "CustomFragDiolog";
+    public static final String DIALOG_TAG = "CustomFragDiolog";
     private ArrayList<RideOfferModel> rideOfferModelList;
     private FirebaseDatabase database;
+    FloatingActionButton options ;
 
-
-    FloatingActionButton options ,drive, request;
-
-    TextView offerRide, requestRide;
 
     public OfferFragment() {
         // Required empty public constructor
@@ -93,7 +92,8 @@ public class OfferFragment extends Fragment {
         //setUpRideOfferModels(); still needs to be created
 
 
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity(), rideOfferModelList );
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity(), rideOfferModelList,
+                this);
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -142,41 +142,15 @@ public class OfferFragment extends Fragment {
 
         // Floating Action Buttons
          options = rootView.findViewById(R.id.floatingActionButton);
-        drive = rootView.findViewById(R.id.floatingActionButton3);
-         request = rootView.findViewById(R.id.floatingActionButton2);
-        offerRide = rootView.findViewById(R.id.textView8);
-        requestRide = rootView.findViewById(R.id.textView7);
-
-        drive.setVisibility(rootView.GONE);
-        request.setVisibility(rootView.GONE);
-        requestRide.setVisibility(rootView.GONE);
-        offerRide.setVisibility(rootView.GONE);
 
 
-        AtomicReference<Boolean> visible = new AtomicReference<>(false);
 
-        options.setOnClickListener(view -> {
-            if(!visible.get()){
-                drive.show();
-                request.show();
-                requestRide.setVisibility(rootView.VISIBLE);
-                offerRide.setVisibility(rootView.VISIBLE);
 
-                visible.set(true);
-            }else{
-                drive.hide();
-                request.hide();
-                requestRide.setVisibility(rootView.GONE);
-                offerRide.setVisibility(rootView.GONE);
 
-                visible.set(false);
 
-            }
+       // AtomicReference<Boolean> visible = new AtomicReference<>(false);
 
-        });
-
-        //Offer Button
-        drive.setOnClickListener(new View.OnClickListener() {
+        options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new RecyclerViewAdapter.OfferDialogFragment().show(getChildFragmentManager(),
@@ -184,34 +158,45 @@ public class OfferFragment extends Fragment {
             }
         });
 
-        //request ride listener
-        request.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new RecyclerViewAdapter.RequestDialogFragment().show(getChildFragmentManager(),
-                        DIALOG_TAG);
 
-            }
-        });
+
+
+
+
+
+
+
 
 
         return rootView;
     }
 
+    @Override
+    public void onItemClick(int position) {
+
+        new RecyclerViewAdapter.EditOfferDialogFragment().show(getChildFragmentManager(),
+                DIALOG_TAG);
+
+    }
 }
-
-//
-//
+/**
+ *
+ *
+ *
+ */
 //Defines recyclerview
-class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>{
+class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>  {
 
+    private final RecyclerViewInterfave recyclerViewInterfave;
     Context context;
     ArrayList<RideOfferModel> rideOfferModels;
     private final static String DEBUG = "Recycler View Adapter";
 
-    public RecyclerViewAdapter(Context context, ArrayList<RideOfferModel> rideOfferModels){
+    public RecyclerViewAdapter(Context context, ArrayList<RideOfferModel> rideOfferModels,
+                               RecyclerViewInterfave recyclerViewInterfave){
         this.context = context;
         this.rideOfferModels = rideOfferModels;
+        this.recyclerViewInterfave = recyclerViewInterfave;
         Log.d(DEBUG, "adapter created");
     }
 
@@ -224,7 +209,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
         View view = inflater.inflate(R.layout.recycler_view, parent, false);
 
         Log.d(DEBUG, "On Create View Holder");
-        return new RecyclerViewAdapter.MyViewHolder(view);
+        return new RecyclerViewAdapter.MyViewHolder(view, recyclerViewInterfave);
     }
 
     @Override
@@ -241,7 +226,11 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
         //holder.name.setText();
         //holder.name.setText();
 
-        holder.delete.setText("Delete");
+        //holder.delete.setText("Edit");
+
+
+
+
 
         Log.d(DEBUG, "recycler view item added: " + rideOfferModel);
 
@@ -258,22 +247,41 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
         private TextView name, time, location;
         private Button delete;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, RecyclerViewInterfave recyclerViewInterfave) {
             super(itemView);
 
             name = itemView.findViewById(R.id.textView2);
             time = itemView.findViewById(R.id.textView4);
             location = itemView.findViewById(R.id.textView5);
-            delete = itemView.findViewById(R.id.button3);
+            //delete = itemView.findViewById(R.id.button3);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(recyclerViewInterfave != null){
+                        int position = getAdapterPosition();
+
+                        if(position != RecyclerView.NO_POSITION){
+                            recyclerViewInterfave.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
 
             Log.d(DEBUG, "My View Holder");
 
 
+
         }
+
     }
 
-    //
-    //
+    /**
+     *
+     *
+     *
+     */
 
     //Offer Dialog Handler
     public static class OfferDialogFragment extends DialogFragment {
@@ -308,7 +316,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             });
 
             //
-            //Add To DB in this meathod
+            //Add To DB in this method
             builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -367,29 +375,37 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
 
     }
 
-    //request dialog handler
-    public static class RequestDialogFragment extends DialogFragment {
-        public static RequestDialogFragment newInstance() {
-            return new RequestDialogFragment();
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     */
+    //Offer Dialog Handler
+    public static class EditOfferDialogFragment extends DialogFragment {
+        public static EditOfferDialogFragment newInstance() {
+            return new EditOfferDialogFragment();
         }
 
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final View layout = inflater.inflate(R.layout.request_dialog,
+            final View layout = inflater.inflate(R.layout.offer_dialog,
                     (ViewGroup) getActivity().findViewById(R.id.linearLayout));
-            final EditText from = (EditText) layout.findViewById(R.id.editTextText);
-            final EditText to = (EditText) layout.findViewById(R.id.editTextText2);
-            final EditText date = (EditText) layout.findViewById(R.id.editTextDate2);
-            final EditText time = (EditText) layout.findViewById(R.id.editTextTime2);
-
+            final EditText from = (EditText) layout.findViewById(R.id.editText);
+            final EditText to = (EditText) layout.findViewById(R.id.editText2);
+            final EditText date = (EditText) layout.findViewById(R.id.editTextDate);
+            final EditText time = (EditText) layout.findViewById(R.id.editTextTime);
+            final EditText seats = (EditText) layout.findViewById(R.id.editTextNumber);
 
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setView(layout);
             // Now configure the AlertDialog
-            builder.setTitle("Request Ride");
+            builder.setTitle("Edit Offer Ride");
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -399,20 +415,33 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
                 }
             });
 
+            builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    /** functions to delete offer view*/
+                    dialog.dismiss();
+                }
+            });
+
             //
             //Add To DB in this meathod
-            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String strFrom = from.getText().toString();
                     String strTo = to.getText().toString();
-                    String strDate = date.getText().toString();
-                    String strTime = time.getText().toString();
+                    String strDate = date.getText().toString() + " || " + time.getText().toString();
+                    String strSeats = seats.getText().toString();
+
+                    //post to db
+                    RideOfferModel rideOfferModel = new RideOfferModel(CurrentUser.email, strSeats, strFrom, strTo, strDate, false, "none");
+                    createNewOffer(rideOfferModel);
 
 
 
                     Toast.makeText(getActivity(), "From: " + strFrom + " To: " + strTo + " Date: "
-                                    + strDate + " Time: " + strTime ,
+                                    + strDate + " Seats: " + strSeats,
                             Toast.LENGTH_SHORT).show();
 
                     // We forcefully dismiss and remove the Dialog, so it
@@ -423,8 +452,37 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyVie
             // Create the AlertDialog and show it
             return builder.create();
         }
-    }
 
+
+
+        private void createNewOffer(RideOfferModel rideOfferModel) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("rideoffers");
+
+            myRef.push().setValue( rideOfferModel )
+                    .addOnSuccessListener( new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Show a quick confirmation
+                            //Toast.makeText(getActivity(), "Ride offer created: " + rideOfferModel,
+                            //        Toast.LENGTH_SHORT).show();
+                            Log.d(DEBUG, "New ride offer created: " + rideOfferModel);
+
+                            // Clear the EditTexts for next use.
+
+                        }
+                    })
+                    .addOnFailureListener( new OnFailureListener() {
+                        @Override
+                        public void onFailure( @NonNull Exception e ) {
+                            Toast.makeText( getActivity(), "Failed to create a ride offer: " + rideOfferModel,
+                                    Toast.LENGTH_SHORT).show();
+                            Log.d(DEBUG, "Failed to create ride offer: " + rideOfferModel);
+                        }
+                    });
+        }
+
+    }
 
 
 }
