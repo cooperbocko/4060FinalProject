@@ -2,25 +2,31 @@ package edu.uga.cs.mobliefinalproject;
 
 public class VerifyModel {
     public String key;
+    public String refKey;
     public String driver;
     public String rider;
     public boolean driverAccepted;
     public boolean riderAccepted;
+    public String type;
 
     public VerifyModel(String driver, String rider, boolean driverAccepted, boolean riderAccepted) {
         this.key = null;
+        this.refKey = null;
         this.driver = driver;
         this.rider = rider;
         this.driverAccepted = driverAccepted;
         this.riderAccepted = riderAccepted;
+        this.type = null;
     }
 
     public VerifyModel() {
         this.key = null;
+        this.refKey = null;
         this.driver = null;
         this.rider = null;
         this.driverAccepted = false;
         this.riderAccepted = false;
+        this.type = null;
     }
 
     public String getKey() {
@@ -67,5 +73,21 @@ public class VerifyModel {
     public String toString() {
         return "Driver " + driver + " accepted: " + driverAccepted +
                 "\n Rider " + rider + " accepted: " + riderAccepted;
+    }
+
+    public String getRefKey() {
+        return refKey;
+    }
+
+    public void setRefKey(String refKey) {
+        this.refKey = refKey;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

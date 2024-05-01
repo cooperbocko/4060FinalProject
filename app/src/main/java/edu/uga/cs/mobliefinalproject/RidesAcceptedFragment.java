@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -14,9 +15,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
-public class RidesAcceptedFragment extends Fragment {
+public class RidesAcceptedFragment extends Fragment implements RecyclerViewInterfave {
+
+    private static final String FRAGMENT_POSITION = "position";
+    private static final String DEBUG = "Accepted Rides";
+
+    public static final String DIALOG_TAG = "CustomFragDiolog";
+    private ArrayList<RideOfferModel> rideOfferModelList;
+    private FirebaseDatabase database;
 
     public RidesAcceptedFragment() {
         // Required empty public constructor
@@ -25,7 +39,7 @@ public class RidesAcceptedFragment extends Fragment {
     public static RidesAcceptedFragment newInstance(int position) {
         RidesAcceptedFragment fragment = new RidesAcceptedFragment();
         Bundle args = new Bundle();
-
+        args.putInt(FRAGMENT_POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -34,15 +48,70 @@ public class RidesAcceptedFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
+            int position = getArguments().getInt(FRAGMENT_POSITION);
         }
+        //list of ride offers
+        rideOfferModelList = new ArrayList<>();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rides_accepted, container, false);
+        View rootView =  inflater.inflate(R.layout.fragment_rides_accepted, container, false);
+
+        RecyclerView recycler = rootView.findViewById(R.id.rv_rideAccept);
+
+        RARecyclerViewAdapter adapter = new RARecyclerViewAdapter(getActivity(), rideOfferModelList,
+                this);
+        recycler.setAdapter(adapter);
+        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //database stuff
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("rideoffers");
+
+        //gets accepted offers if you are a driver/accepter
+        myRef.addValueEventListener( new ValueEventListener() {
+
+            @Override
+            public void onDataChange( @NonNull DataSnapshot snapshot ) {
+                // Once we have a DataSnapshot object, we need to iterate over the elements and place them on our job lead list.
+                rideOfferModelList.clear(); // clear the current content; this is inefficient!
+                for( DataSnapshot postSnapshot: snapshot.getChildren() ) {
+                    RideOfferModel rideOfferModel = postSnapshot.getValue(RideOfferModel.class);
+                    rideOfferModel.setKey( postSnapshot.getKey() );
+
+                    //check if accepted and if driver/accepter
+                    if (rideOfferModel.isAccepted() && (rideOfferModel.driver.equals(CurrentUser.email) || rideOfferModel.acceptedBy.equals(CurrentUser.email))) {
+                        //add offer to list
+                        rideOfferModelList.add( rideOfferModel );
+                        Log.d(DEBUG, "Ride Offer added: " + rideOfferModel);
+
+                    } else {
+                        Log.d(DEBUG, "Ride Offer not added: " + rideOfferModel);
+                        continue;
+
+                    }
+                }
+
+                //implement this later
+                Log.d(DEBUG, "ValueEventListener: notifying recyclerAdapter" );
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled( @NonNull DatabaseError databaseError ) {
+                Log.d(DEBUG, "Error reading offers from database: " + databaseError);
+            }
+        } );
+
+        return rootView;
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
     }
 }
 /**
@@ -51,7 +120,7 @@ public class RidesAcceptedFragment extends Fragment {
  *
  */
 //Defines recyclerview
-class RARecyclerViewAdapter extends RecyclerView.Adapter<RARecyclerViewAdapter.MyViewHolder>  {
+class RARecyclerViewAdapter extends RecyclerView.Adapter<RARecyclerViewAdapter.MyViewHolder> {
 
     private final RecyclerViewInterfave recyclerViewInterfave;
     Context context;
@@ -59,7 +128,7 @@ class RARecyclerViewAdapter extends RecyclerView.Adapter<RARecyclerViewAdapter.M
     private final static String DEBUG = "Recycler View Adapter";
 
     public RARecyclerViewAdapter(Context context, ArrayList<RideOfferModel> rideOfferModels,
-                               RecyclerViewInterfave recyclerViewInterfave){
+                                 RecyclerViewInterfave recyclerViewInterfave) {
         this.context = context;
         this.rideOfferModels = rideOfferModels;
         this.recyclerViewInterfave = recyclerViewInterfave;
@@ -68,18 +137,18 @@ class RARecyclerViewAdapter extends RecyclerView.Adapter<RARecyclerViewAdapter.M
 
     @NonNull
     @Override
-    public RecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RARecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //inflate layout and give look to our rows
 
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.recycler_view, parent, false);
 
         Log.d(DEBUG, "On Create View Holder");
-        return new RecyclerViewAdapter.MyViewHolder(view, recyclerViewInterfave);
+        return new RARecyclerViewAdapter.MyViewHolder(view, recyclerViewInterfave);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         //assign values to each row as they reenter screen
 
         RideOfferModel rideOfferModel = rideOfferModels.get(position);
@@ -95,11 +164,7 @@ class RARecyclerViewAdapter extends RecyclerView.Adapter<RARecyclerViewAdapter.M
         holder.join.setVisibility(View.GONE);
 
 
-
-
-
         Log.d(DEBUG, "recycler view item added: " + rideOfferModel);
-
     }
 
     @Override
@@ -108,7 +173,7 @@ class RARecyclerViewAdapter extends RecyclerView.Adapter<RARecyclerViewAdapter.M
         return rideOfferModels.size();
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView name, time, location;
         private Button join;
@@ -132,10 +197,10 @@ class RARecyclerViewAdapter extends RecyclerView.Adapter<RARecyclerViewAdapter.M
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(recyclerViewInterfave != null){
+                    if (recyclerViewInterfave != null) {
                         int position = getAdapterPosition();
 
-                        if(position != RecyclerView.NO_POSITION){
+                        if (position != RecyclerView.NO_POSITION) {
                             recyclerViewInterfave.onItemClick(position);
                         }
                     }
@@ -146,7 +211,7 @@ class RARecyclerViewAdapter extends RecyclerView.Adapter<RARecyclerViewAdapter.M
             Log.d(DEBUG, "My View Holder");
 
 
-
         }
 
     }
+}
